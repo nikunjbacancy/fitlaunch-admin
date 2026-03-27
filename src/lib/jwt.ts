@@ -43,6 +43,7 @@ export function jwtToAuthUser(token: string): AuthUser | null {
     fullName: payload.full_name ?? '',
     role: payload.role,
     tenantId: payload.tenant_id ?? null,
+    tenantName: null,
     tenantType,
     isTwoFactorVerified: false,
   }

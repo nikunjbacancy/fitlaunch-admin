@@ -8,7 +8,7 @@ export function AdminLayout(): React.ReactElement {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-kmvmt-bg">
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <Sidebar />

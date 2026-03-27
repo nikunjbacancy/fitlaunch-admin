@@ -7,11 +7,13 @@ interface AuthState {
   isTwoFactorVerified: boolean
   isAuthenticated: boolean
   isRestoringSession: boolean
+  tenantOnboardingStep: string | null
 
   // Actions
   setUser: (user: AuthUser, accessToken: string, twoFactorVerified?: boolean) => void
   setTwoFactorVerified: () => void
   setSessionRestored: () => void
+  setTenantOnboardingStep: (step: string) => void
   logout: () => void
 }
 
@@ -20,6 +22,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
   isTwoFactorVerified: false,
   isAuthenticated: false,
   isRestoringSession: true, // true until the first refresh attempt completes
+  tenantOnboardingStep: null,
 
   setUser: (user, accessToken, twoFactorVerified = false) => {
     setAccessToken(accessToken)
@@ -38,12 +41,17 @@ export const useAuthStore = create<AuthState>()((set) => ({
     set({ isRestoringSession: false })
   },
 
+  setTenantOnboardingStep: (step) => {
+    set({ tenantOnboardingStep: step })
+  },
+
   logout: () => {
     setAccessToken(null)
     set({
       user: null,
       isAuthenticated: false,
       isTwoFactorVerified: false,
+      tenantOnboardingStep: null,
     })
   },
 }))

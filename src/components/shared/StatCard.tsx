@@ -33,16 +33,16 @@ export function StatCard({ title, value, description, icon, trend, isLoading }: 
     <Card>
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          {icon && <div className="text-muted-foreground">{icon}</div>}
+          <p className="text-sm font-medium text-kmvmt-navy/60">{title}</p>
+          {icon && <div className="text-kmvmt-navy/40">{icon}</div>}
         </div>
-        <p className="text-3xl font-bold text-foreground mt-2">{value}</p>
+        <p className="text-3xl font-bold text-kmvmt-navy mt-2">{value}</p>
         <div className="flex items-center gap-2 mt-1">
           {trend && (
             <span
               className={cn(
                 'flex items-center text-xs font-medium',
-                trend.value >= 0 ? 'text-green-600' : 'text-red-600'
+                trend.value >= 0 ? 'text-green-600' : 'text-kmvmt-red-dark'
               )}
             >
               {trend.value >= 0 ? (
@@ -53,7 +53,7 @@ export function StatCard({ title, value, description, icon, trend, isLoading }: 
               {Math.abs(trend.value)}% {trend.label}
             </span>
           )}
-          {description && <p className="text-xs text-muted-foreground">{description}</p>}
+          {description && <p className="text-xs text-kmvmt-navy/50">{description}</p>}
         </div>
       </CardContent>
     </Card>

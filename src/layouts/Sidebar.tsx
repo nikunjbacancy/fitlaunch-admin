@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
+import kmvmtLogo from '@/assets/logo_bg_white.png'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
@@ -15,16 +16,14 @@ export function Sidebar(): React.ReactElement {
   return (
     <aside
       className={cn(
-        'relative flex flex-col h-screen bg-slate-900 text-slate-100 transition-all duration-200 shrink-0',
+        'relative flex flex-col h-screen bg-kmvmt-navy text-white transition-all duration-200 shrink-0',
         collapsed ? 'w-16' : 'w-64'
       )}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-slate-700/60 shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <span className="text-white font-bold text-sm">F</span>
-        </div>
-        {!collapsed && <span className="font-semibold text-white truncate">FitLaunch</span>}
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0">
+        <img src={kmvmtLogo} alt="KMVMT" className="w-10 h-10 rounded-xl object-contain shrink-0" />
+        {!collapsed && <span className="font-semibold text-white truncate">KMVMT</span>}
       </div>
 
       {/* Collapse toggle */}
@@ -33,12 +32,12 @@ export function Sidebar(): React.ReactElement {
           setCollapsed((c) => !c)
         }}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        className="absolute -right-3 top-[4.5rem] z-10 w-6 h-6 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center hover:bg-slate-600 transition-colors"
+        className="absolute -right-3 top-[4.5rem] z-10 w-6 h-6 rounded-full bg-kmvmt-navy border border-white/20 flex items-center justify-center hover:bg-kmvmt-blue-light/20 transition-colors"
       >
         {collapsed ? (
-          <ChevronRight className="w-3 h-3 text-slate-300" />
+          <ChevronRight className="w-3 h-3 text-white" />
         ) : (
-          <ChevronLeft className="w-3 h-3 text-slate-300" />
+          <ChevronLeft className="w-3 h-3 text-white" />
         )}
       </button>
 
@@ -47,7 +46,7 @@ export function Sidebar(): React.ReactElement {
         {navGroups.map((group, gi) => (
           <div key={gi}>
             {group.title && !collapsed && (
-              <p className="px-3 mb-1 text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <p className="px-3 mb-1 text-xs font-medium text-kmvmt-blue-light/60 uppercase tracking-wider">
                 {group.title}
               </p>
             )}
@@ -68,14 +67,14 @@ export function Sidebar(): React.ReactElement {
                       className={cn(
                         'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                         isActive
-                          ? 'bg-primary text-white'
-                          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
+                          ? 'bg-white/15 text-white'
+                          : 'text-white/60 hover:bg-white/10 hover:text-white'
                       )}
                     >
                       <item.icon className="w-4 h-4 shrink-0" />
                       {!collapsed && <span className="truncate">{item.label}</span>}
                       {!collapsed && item.badge && (
-                        <span className="ml-auto text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">
+                        <span className="ml-auto text-xs bg-kmvmt-blue-light/20 text-kmvmt-blue-light px-1.5 py-0.5 rounded-full">
                           {item.badge}
                         </span>
                       )}
@@ -89,7 +88,7 @@ export function Sidebar(): React.ReactElement {
       </nav>
 
       {/* User + logout */}
-      <div className="px-2 py-3 border-t border-slate-700/60 shrink-0">
+      <div className="px-2 py-3 border-t border-white/10 shrink-0">
         {user && (
           <div
             className={cn(
@@ -98,15 +97,15 @@ export function Sidebar(): React.ReactElement {
             )}
           >
             {/* Avatar */}
-            <div className="w-7 h-7 rounded-full bg-primary/30 flex items-center justify-center shrink-0">
-              <span className="text-xs font-semibold text-primary uppercase">
+            <div className="w-7 h-7 rounded-full bg-kmvmt-blue-light/20 flex items-center justify-center shrink-0">
+              <span className="text-xs font-semibold text-kmvmt-blue-light uppercase">
                 {user.fullName.charAt(0)}
               </span>
             </div>
             {!collapsed && (
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-slate-200 truncate">{user.fullName}</p>
-                <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                <p className="text-xs font-medium text-white truncate">{user.fullName}</p>
+                <p className="text-xs text-white/50 truncate">{user.email}</p>
               </div>
             )}
           </div>
@@ -115,7 +114,7 @@ export function Sidebar(): React.ReactElement {
           onClick={logout}
           title={collapsed ? 'Sign out' : undefined}
           className={cn(
-            'flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors',
+            'flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors',
             collapsed && 'justify-center'
           )}
         >

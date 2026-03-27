@@ -8,13 +8,13 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Zap,
   BarChart3,
   Users,
   Shield,
   FlaskConical,
   AlertCircle,
 } from 'lucide-react'
+import kmvmtLogo from '@/assets/logo_bg_white.png'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,10 +32,11 @@ const DEV_USERS: { role: UserRole; label: string; color: string; user: AuthUser 
     color: 'bg-purple-100 text-purple-700 hover:bg-purple-200',
     user: {
       id: 'dev-sa-001',
-      email: 'superadmin@fitlaunch.com',
+      email: 'superadmin@kmvmt.com',
       fullName: 'Dev Super Admin',
       role: 'super_admin',
       tenantId: null,
+      tenantName: null,
       tenantType: null,
       isTwoFactorVerified: true,
     },
@@ -46,10 +47,11 @@ const DEV_USERS: { role: UserRole; label: string; color: string; user: AuthUser 
     color: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
     user: {
       id: 'dev-pm-001',
-      email: 'pm@fitlaunch.com',
+      email: 'pm@kmvmt.com',
       fullName: 'Dev Property Manager',
       role: 'property_manager',
       tenantId: 'tenant-apt-001',
+      tenantName: 'Meridian Apartments',
       tenantType: 'apartment',
       isTwoFactorVerified: true,
     },
@@ -60,10 +62,11 @@ const DEV_USERS: { role: UserRole; label: string; color: string; user: AuthUser 
     color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
     user: {
       id: 'dev-tr-001',
-      email: 'trainer@fitlaunch.com',
+      email: 'trainer@kmvmt.com',
       fullName: 'Dev Trainer',
       role: 'trainer',
       tenantId: 'tenant-tr-001',
+      tenantName: null,
       tenantType: 'trainer',
       isTwoFactorVerified: true,
     },
@@ -125,12 +128,12 @@ export default function LoginPage(): React.ReactElement {
   return (
     <div className="flex min-h-screen">
       {/* ── Left panel ─────────────────────────────────────────── */}
-      <div className="relative hidden lg:flex lg:w-[52%] flex-col justify-between overflow-hidden bg-slate-900 px-12 py-10">
+      <div className="relative hidden lg:flex lg:w-[52%] flex-col justify-between overflow-hidden bg-kmvmt-navy px-12 py-10">
         {/* Background gradient orbs */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-600/20 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/10 blur-2xl" />
+          <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-kmvmt-blue-light/20 blur-3xl" />
+          <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-kmvmt-blue-light/15 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-kmvmt-blue-light/10 blur-2xl" />
         </div>
 
         {/* Subtle grid overlay */}
@@ -145,12 +148,10 @@ export default function LoginPage(): React.ReactElement {
 
         {/* Logo */}
         <div className="relative flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 shadow-lg shadow-blue-500/30">
-            <Zap className="h-5 w-5 text-white" />
-          </div>
+          <img src={kmvmtLogo} alt="KMVMT" className="w-14 h-14 rounded-2xl object-contain" />
           <div>
-            <p className="text-base font-bold text-white tracking-tight">FitLaunch</p>
-            <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
+            <p className="text-base font-bold text-white tracking-tight">KMVMT</p>
+            <p className="text-[11px] font-medium text-kmvmt-blue-light/60 uppercase tracking-widest">
               Admin Console
             </p>
           </div>
@@ -162,11 +163,11 @@ export default function LoginPage(): React.ReactElement {
             Your entire fitness
             <br />
             platform,{' '}
-            <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-kmvmt-blue-light to-white bg-clip-text text-transparent">
               one console.
             </span>
           </h1>
-          <p className="mt-4 text-base text-slate-400 leading-relaxed max-w-sm">
+          <p className="mt-4 text-base text-kmvmt-blue-light/70 leading-relaxed max-w-sm">
             Manage tenants, analytics, billing, and member engagement across your entire network.
           </p>
 
@@ -175,11 +176,11 @@ export default function LoginPage(): React.ReactElement {
             {FEATURE_HIGHLIGHTS.map(({ icon: Icon, title, description }) => (
               <li key={title} className="flex items-start gap-4">
                 <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5 ring-1 ring-white/10">
-                  <Icon className="h-4 w-4 text-blue-400" />
+                  <Icon className="h-4 w-4 text-kmvmt-blue-light" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{title}</p>
-                  <p className="mt-0.5 text-sm text-slate-400">{description}</p>
+                  <p className="mt-0.5 text-sm text-kmvmt-blue-light/70">{description}</p>
                 </div>
               </li>
             ))}
@@ -189,31 +190,29 @@ export default function LoginPage(): React.ReactElement {
         {/* Footer */}
         <div className="relative flex items-center gap-2">
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          <p className="text-xs text-slate-500">All systems operational</p>
+          <p className="text-xs text-kmvmt-blue-light/50">All systems operational</p>
         </div>
       </div>
 
       {/* ── Right panel — form ──────────────────────────────────── */}
-      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-6 py-12">
+      <div className="flex flex-1 flex-col items-center justify-center bg-kmvmt-bg px-6 py-12">
         {/* Mobile logo */}
         <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500">
-            <Zap className="h-4 w-4 text-white" />
-          </div>
-          <span className="text-lg font-bold text-slate-900">FitLaunch Admin</span>
+          <img src={kmvmtLogo} alt="KMVMT" className="w-12 h-12 rounded-xl object-contain" />
+          <span className="text-lg font-bold text-kmvmt-navy">KMVMT Admin</span>
         </div>
 
         <div className="w-full max-w-sm">
           {/* Heading */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-900">Welcome back</h2>
-            <p className="mt-1.5 text-sm text-slate-500">
+            <h2 className="text-2xl font-bold text-kmvmt-navy">Welcome back</h2>
+            <p className="mt-1.5 text-sm text-kmvmt-navy/60">
               Sign in to your admin account to continue
             </p>
           </div>
 
           {/* Form card */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <div className="rounded-2xl border border-zinc-200 bg-kmvmt-white p-8 shadow-sm">
             <form
               onSubmit={(e) => {
                 void handleSubmit(onSubmit)(e)
@@ -223,18 +222,18 @@ export default function LoginPage(): React.ReactElement {
             >
               {/* Email */}
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                <Label htmlFor="email" className="text-sm font-medium text-kmvmt-navy">
                   Email address
                 </Label>
                 <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kmvmt-navy/40" />
                   <Input
                     id="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="you@fitlaunch.com"
+                    placeholder="you@kmvmt.com"
                     disabled={isPending}
-                    className="pl-10 h-11 border-slate-200 bg-slate-50 focus:bg-white transition-colors"
+                    className="pl-10 h-11 border-zinc-200 bg-kmvmt-bg focus:bg-kmvmt-white transition-colors"
                     {...register('email')}
                   />
                 </div>
@@ -243,17 +242,17 @@ export default function LoginPage(): React.ReactElement {
 
               {/* Password */}
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-sm font-medium text-slate-700">
+                <Label htmlFor="password" className="text-sm font-medium text-kmvmt-navy">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kmvmt-navy/40" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     disabled={isPending}
-                    className="pl-10 pr-10 h-11 border-slate-200 bg-slate-50 focus:bg-white transition-colors"
+                    className="pl-10 pr-10 h-11 border-zinc-200 bg-kmvmt-bg focus:bg-kmvmt-white transition-colors"
                     {...register('password')}
                   />
                   <button
@@ -262,7 +261,7 @@ export default function LoginPage(): React.ReactElement {
                     onClick={() => {
                       setShowPassword((prev) => !prev)
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-kmvmt-navy/40 hover:text-kmvmt-navy transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -283,7 +282,7 @@ export default function LoginPage(): React.ReactElement {
               {/* Submit */}
               <Button
                 type="submit"
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm shadow-blue-600/20 transition-all mt-2"
+                className="w-full h-11 bg-kmvmt-navy hover:bg-kmvmt-blue-light/80 text-white font-semibold shadow-sm transition-all mt-2"
                 disabled={isPending}
               >
                 {isPending ? (
@@ -299,7 +298,7 @@ export default function LoginPage(): React.ReactElement {
           </div>
 
           {/* Security note */}
-          <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+          <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-kmvmt-navy/40">
             <Shield className="h-3.5 w-3.5" />
             Secured with 256-bit encryption and two-factor authentication
           </p>

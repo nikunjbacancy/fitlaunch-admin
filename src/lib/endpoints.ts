@@ -23,6 +23,23 @@ export const API_ENDPOINTS = {
     APPROVE: (id: string) => `/tenants/${id}/approve`,
     SUSPEND: (id: string) => `/tenants/${id}/suspend`,
     REACTIVATE: (id: string) => `/tenants/${id}/reactivate`,
+    CREATE_APARTMENT: '/admin/tenants/apartment',
+    UPDATE: (id: string) => `/admin/tenants/${id}`,
+    RESEND_INVITE: (id: string) => `/admin/tenants/${id}/resend-invite`,
+  },
+
+  // ── Invite (Property Manager onboarding) ─────────────────────────────────
+  INVITE: {
+    VALIDATE: '/auth/invite/validate',
+    ACCEPT: '/auth/invite/accept',
+  },
+
+  // ── Property Manager — Setup Wizard ───────────────────────────────────────
+  PM_SETUP: {
+    BRANDING: (id: string) => `/tenants/${id}/branding`,
+    ADD_UNIT: (id: string) => `/tenants/${id}/units`,
+    BULK_UNITS: (id: string) => `/tenants/${id}/units/bulk`,
+    COMPLETE: (id: string) => `/tenants/${id}/onboarding/complete`,
   },
 
   // ── Super Admin — Analytics ───────────────────────────────────────────────

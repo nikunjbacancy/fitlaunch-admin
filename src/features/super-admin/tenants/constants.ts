@@ -1,4 +1,4 @@
-import type { TenantStatus, SubscriptionPlan } from '@/types/tenant.types'
+import type { TenantStatus, SubscriptionPlan, OnboardingStep } from '@/types/tenant.types'
 import type { TenantType } from '@/types/auth.types'
 
 export const TENANT_STATUS_LABELS: Record<TenantStatus, string> = {
@@ -23,7 +23,7 @@ export const TENANT_TYPE_LABELS: Record<TenantType, string> = {
 
 export const TENANTS_PAGE_SIZE = 50
 
-export const TENANT_TABLE_COLUMNS = 8
+export const TENANT_TABLE_COLUMNS = 5
 
 /** Consolidated badge classes — shared by TenantTableRow and TenantMetaCard */
 export const PLAN_BADGE_CLASSES: Record<string, string> = {
@@ -45,6 +45,24 @@ export const TENANT_TRIAL_DESCRIPTION = (date?: string | null) =>
     ? `This tenant is on a free trial that ends on ${new Date(date).toLocaleDateString()}.`
     : 'This tenant is on a free trial.'
 
+export const ONBOARDING_STEP_LABELS: Record<OnboardingStep, string> = {
+  invited: 'Invite Sent',
+  password_set: 'Password Set',
+  two_fa_complete: '2FA Complete',
+  branding_complete: 'Branding Done',
+  units_complete: 'Units Added',
+  active: 'Active',
+}
+
+export const ONBOARDING_STEP_BADGE_CLASSES: Record<OnboardingStep, string> = {
+  invited: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  password_set: 'bg-blue-100 text-blue-700 border-blue-200',
+  two_fa_complete: 'bg-blue-100 text-blue-700 border-blue-200',
+  branding_complete: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+  units_complete: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+  active: 'bg-green-100 text-green-700 border-green-200',
+}
+
 export const TENANT_COPY = {
   // List page
   PAGE_TITLE: 'Tenants',
@@ -58,9 +76,6 @@ export const TENANT_COPY = {
   COL_TENANT: 'Tenant',
   COL_TYPE: 'Type',
   COL_STATUS: 'Status',
-  COL_PLAN: 'Plan',
-  COL_MEMBERS: 'Members',
-  COL_MRR: 'MRR',
   COL_CREATED: 'Created',
   ARIA_PREV_PAGE: 'Previous page',
   ARIA_NEXT_PAGE: 'Next page',
@@ -87,4 +102,21 @@ export const TENANT_COPY = {
   REACTIVATE_DESCRIPTION: "This will restore the tenant's active status and platform access.",
   REACTIVATE_LABEL: 'Reactivate',
   CANCEL_LABEL: 'Cancel',
+  // Add Complex Modal
+  ADD_COMPLEX_TITLE: 'Add New Apartment Complex',
+  ADD_COMPLEX_DESCRIPTION: 'Create the complex and send an invite to the Property Manager.',
+  ADD_COMPLEX_SUBMIT: 'Create Complex & Send Invite',
+  ADD_COMPLEX_SUCCESS: 'Complex created. Invite sent to {email}.',
+  // Edit Complex Modal
+  EDIT_COMPLEX_TITLE: 'Edit Complex Details',
+  EDIT_COMPLEX_SUBMIT: 'Save Changes',
+  EDIT_COMPLEX_SUCCESS: 'Complex updated successfully.',
+  // Resend Invite
+  RESEND_INVITE_LABEL: 'Resend Invite',
+  RESEND_INVITE_SUCCESS: 'Invite resent to {email}.',
+  RESEND_INVITE_SUCCESS_GENERIC: 'Invite resent successfully.',
+  RESEND_INVITE_ERROR: 'PM has already completed onboarding.',
+  // Row actions
+  VIEW_DETAILS_LABEL: 'View Details',
+  EDIT_COMPLEX_LABEL: 'Edit Complex',
 } as const

@@ -5,10 +5,11 @@ import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { ErrorState } from '@/components/shared/ErrorState'
 import { DataTableSkeleton } from '@/components/shared/DataTableSkeleton'
-import { Building2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Building2, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { useTenants } from './useTenants'
 import { TenantFilters } from './TenantFilters'
 import { TenantTableRow } from './TenantTableRow'
+import { AddComplexModal } from './AddComplexModal'
 import { TENANTS_PAGE_SIZE, TENANT_TABLE_COLUMNS, TENANT_COPY } from './constants'
 import type { TenantFilters as TenantFiltersType, TenantFilterUpdate } from './tenant.types'
 
@@ -22,6 +23,7 @@ const DEFAULT_FILTERS: TenantFiltersType = {
 
 export function TenantList() {
   const [filters, setFilters] = useState<TenantFiltersType>(DEFAULT_FILTERS)
+  const [addModalOpen, setAddModalOpen] = useState(false)
 
   const { data, isLoading, isError, refetch } = useTenants(filters)
 
@@ -38,7 +40,18 @@ export function TenantList() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title={TENANT_COPY.PAGE_TITLE} description={TENANT_COPY.PAGE_DESCRIPTION} />
+      <div className="flex items-start justify-between">
+        <PageHeader title={TENANT_COPY.PAGE_TITLE} description={TENANT_COPY.PAGE_DESCRIPTION} />
+        <Button
+          onClick={() => {
+            setAddModalOpen(true)
+          }}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          {TENANT_COPY.ADD_COMPLEX_TITLE}
+        </Button>
+      </div>
+      <AddComplexModal open={addModalOpen} onOpenChange={setAddModalOpen} />
 
       <TenantFilters filters={filters} onChange={handleFilterChange} />
 
@@ -49,9 +62,6 @@ export function TenantList() {
               <TableHead>{TENANT_COPY.COL_TENANT}</TableHead>
               <TableHead>{TENANT_COPY.COL_TYPE}</TableHead>
               <TableHead>{TENANT_COPY.COL_STATUS}</TableHead>
-              <TableHead>{TENANT_COPY.COL_PLAN}</TableHead>
-              <TableHead className="text-right">{TENANT_COPY.COL_MEMBERS}</TableHead>
-              <TableHead className="text-right">{TENANT_COPY.COL_MRR}</TableHead>
               <TableHead className="text-right">{TENANT_COPY.COL_CREATED}</TableHead>
               <TableHead className="w-10" />
             </TableRow>
@@ -95,7 +105,7 @@ export function TenantList() {
       </div>
 
       {!isLoading && !isError && total > 0 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div className="flex items-center justify-between text-sm text-kmvmt-navy/60">
           <span>
             {total} tenant{total !== 1 ? 's' : ''} total
           </span>

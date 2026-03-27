@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth.store'
 import type { UserRole } from '@/types/auth.types'
@@ -6,13 +6,17 @@ import type { UserRole } from '@/types/auth.types'
 interface ProtectedRouteProps {
   allowedRoles?: UserRole[]
   requireTwoFactor?: boolean
+  skipOnboardingCheck?: boolean
 }
 
 export function ProtectedRoute({
   allowedRoles,
   requireTwoFactor = false,
+  skipOnboardingCheck = false,
 }: ProtectedRouteProps): React.ReactElement {
-  const { isAuthenticated, user, isTwoFactorVerified, isRestoringSession } = useAuthStore()
+  const { isAuthenticated, user, isTwoFactorVerified, isRestoringSession, tenantOnboardingStep } =
+    useAuthStore()
+  const { pathname } = useLocation()
 
   // Wait for session restore before making any auth decisions
   if (isRestoringSession) {
@@ -33,6 +37,17 @@ export function ProtectedRoute({
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />
+  }
+
+  // Redirect property managers through onboarding wizard until they are active
+  if (
+    !skipOnboardingCheck &&
+    user.role === 'property_manager' &&
+    pathname !== '/pm/setup' &&
+    tenantOnboardingStep !== null &&
+    tenantOnboardingStep !== 'active'
+  ) {
+    return <Navigate to="/pm/setup" replace />
   }
 
   return <Outlet />

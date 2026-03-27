@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 export type BadgeStatus =
   | 'active'
   | 'inactive'
+  | 'invited'
   | 'suspended'
   | 'trial'
   | 'lapsed'
@@ -19,13 +20,17 @@ const STATUS_CONFIG: Record<BadgeStatus, { label: string; className: string }> =
     label: 'Active',
     className: 'bg-green-100 text-green-800 border-green-200',
   },
+  invited: {
+    label: 'Invite Sent',
+    className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  },
   inactive: {
     label: 'Inactive',
     className: 'bg-gray-100 text-gray-700 border-gray-200',
   },
   suspended: {
     label: 'Suspended',
-    className: 'bg-red-100 text-red-800 border-red-200',
+    className: 'bg-kmvmt-burgundy/10 text-kmvmt-burgundy border-kmvmt-burgundy/30',
   },
   trial: {
     label: 'Trial',

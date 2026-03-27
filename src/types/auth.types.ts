@@ -8,6 +8,7 @@ export interface AuthUser {
   fullName: string
   role: UserRole
   tenantId: string | null
+  tenantName: string | null
   tenantType: TenantType | null
   isTwoFactorVerified: boolean
 }

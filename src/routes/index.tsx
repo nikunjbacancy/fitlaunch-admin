@@ -32,6 +32,9 @@ const router = createBrowserRouter([
     ],
   },
 
+  // ─── Invite flow (no auth, no layout) ────────────────────────────────────
+  { path: '/invite/accept', element: lazyEl(() => import('@/pages/invite/accept')) },
+
   // ─── Super Admin (Admin layout + role guard + 2FA) ────────────────────────
   {
     element: <ProtectedRoute allowedRoles={['super_admin']} requireTwoFactor />,
@@ -74,6 +77,16 @@ const router = createBrowserRouter([
           },
         ],
       },
+    ],
+  },
+
+  // ─── PM Setup (protected: PM + 2FA, onboarding check bypassed) ──────────
+  {
+    element: (
+      <ProtectedRoute allowedRoles={['property_manager']} requireTwoFactor skipOnboardingCheck />
+    ),
+    children: [
+      { path: '/pm/setup', element: lazyEl(() => import('@/pages/property-manager/setup')) },
     ],
   },
 

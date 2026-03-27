@@ -1,8 +1,8 @@
-# FitLaunch Admin Portal — CLAUDE.md
+# KMVMT Admin Portal — CLAUDE.md
 
 ## Project Context
 
-This is the **FitLaunch Admin Portal** — a React.js SPA for the FitLaunch white-label fitness platform.
+This is the **KMVMT Admin Portal** — a React.js SPA for the KMVMT white-label fitness platform.
 
 - **Mobile app** and **API backend** are in separate repos (already built).
 - This repo builds the web admin portal only, hosted on AWS S3 + CloudFront.
@@ -107,7 +107,7 @@ All URLs, keys, and config values come from `.env`. Never hardcode in source.
 
 ```ts
 // ❌ Bad
-const API_URL = 'https://api.fitlaunch.com/api/v1'
+const API_URL = 'https://api.kmvmt.com/api/v1'
 
 // ✅ Good
 const API_URL = import.meta.env.VITE_API_BASE_URL
@@ -320,6 +320,24 @@ Use skeleton placeholders for list and table views. Reserve spinners for inline 
 
 ---
 
+## UI Design System — Mandatory
+
+> **Before creating or modifying any component, modal, form, page, or UI element, read `UI_GUIDELINES.md` in the project root.**
+> These rules are non-negotiable and override any shadcn/ui defaults or Tailwind conventions.
+
+Key rules (full reference in `UI_GUIDELINES.md`):
+
+- **Color palette**: KMVMT brand tokens (`kmvmt-navy`, `kmvmt-blue-light`, `kmvmt-red-dark`, `kmvmt-red-light`, `kmvmt-burgundy`, `kmvmt-bg`, `kmvmt-white`). No `blue-*`, `indigo-*`, `purple-*` outside of status badges. No `zinc-900` for primary brand actions.
+- **Modal `DialogContent`**: always `className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-lg [&>button]:hidden"` — never rely on shadcn defaults.
+- **Inputs**: always `border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy`.
+- **Primary button**: `bg-kmvmt-navy text-white hover:bg-kmvmt-blue-light/80`. Cancel button: `bg-kmvmt-white border border-zinc-300 text-kmvmt-navy hover:bg-kmvmt-bg`.
+- **Destructive button**: `bg-kmvmt-red-dark text-white hover:bg-kmvmt-red-light`.
+- **Never use** `bg-primary`, `bg-card`, `bg-background`, `bg-muted` on component backgrounds — CSS variables cause transparency in this app's dark shell.
+- **Never use** hardcoded hex colors (e.g. `style={{ backgroundColor: '#192640' }}`) — use Tailwind classes only.
+- **Status badges** are the only place non-brand colors appear — use `ONBOARDING_STEP_BADGE_CLASSES` / `PLAN_BADGE_CLASSES` from `constants.ts`. Suspended badge uses `kmvmt-burgundy`.
+
+---
+
 ## What Claude Must Never Do
 
 - Never generate or guess API endpoint URLs — use only endpoints confirmed from the API repo or explicitly provided.
@@ -332,3 +350,5 @@ Use skeleton placeholders for list and table views. Reserve spinners for inline 
 - Never commit without running lint and type-check.
 - Never create duplicate components — check `src/components/` before creating anything new.
 - Never write inline styles — use Tailwind classes only.
+- Never create or modify UI without following `UI_GUIDELINES.md` — deviating from the design system requires explicit user instruction.
+- Never hardcode user-visible strings (labels, titles, button text, toasts, placeholders) directly in JSX — all copy must live in the feature's `constants.ts` and be referenced by name.

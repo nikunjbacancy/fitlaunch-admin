@@ -2,7 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getErrorMessage } from '@/lib/errors'
 import { tenantService } from './tenantService'
-import type { SuspendTenantPayload } from './tenant.types'
+import { TENANT_COPY } from './constants'
+import type {
+  SuspendTenantPayload,
+  TCreateComplexPayload,
+  TUpdateComplexPayload,
+} from './tenant.types'
 
 export function useTenantActions(tenantId: string) {
   const queryClient = useQueryClient()
@@ -46,4 +51,44 @@ export function useTenantActions(tenantId: string) {
   })
 
   return { approveMutation, suspendMutation, reactivateMutation }
+}
+
+export function useCreateComplex() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (payload: TCreateComplexPayload) => tenantService.createApartmentComplex(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+    },
+    onError: (err) => {
+      toast.error(getErrorMessage(err))
+    },
+  })
+}
+
+export function useUpdateComplex() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: TUpdateComplexPayload }) =>
+      tenantService.updateComplex(id, payload),
+    onSuccess: (_data, { id }) => {
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+      void queryClient.invalidateQueries({ queryKey: ['tenant', id] })
+    },
+    onError: (err) => {
+      toast.error(getErrorMessage(err))
+    },
+  })
+}
+
+export function useResendInvite() {
+  return useMutation({
+    mutationFn: (id: string) => tenantService.resendInvite(id),
+    onSuccess: () => {
+      toast.success(TENANT_COPY.RESEND_INVITE_SUCCESS_GENERIC)
+    },
+    onError: (err) => {
+      toast.error(getErrorMessage(err))
+    },
+  })
 }

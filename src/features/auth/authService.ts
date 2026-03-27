@@ -17,6 +17,7 @@ function mapApiUser(apiUser: ApiLoginResponse['data']['user']): AuthUser {
     fullName: apiUser.full_name,
     role: apiUser.role,
     tenantId: apiUser.tenant_id,
+    tenantName: null,
     // tenantType is not returned by the login endpoint — derive from role
     tenantType:
       apiUser.role === 'property_manager'
