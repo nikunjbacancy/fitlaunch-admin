@@ -8,8 +8,9 @@ export default function RootRedirectPage(): React.ReactElement {
     return <Navigate to="/login" replace />
   }
 
-  const roleRedirects = {
+  const roleRedirects: Record<string, string> = {
     super_admin: '/super-admin',
+    property_owner: '/property-owner',
     property_manager: '/dashboard',
     trainer: '/trainer',
   }

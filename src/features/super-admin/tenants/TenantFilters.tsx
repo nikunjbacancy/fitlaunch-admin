@@ -16,9 +16,10 @@ const DEBOUNCE_MS = 300
 interface TenantFiltersProps {
   filters: TenantFilters
   onChange: (update: TenantFilterUpdate) => void
+  hideTenantType?: boolean
 }
 
-export function TenantFilters({ filters, onChange }: TenantFiltersProps) {
+export function TenantFilters({ filters, onChange, hideTenantType = false }: TenantFiltersProps) {
   const [searchInput, setSearchInput] = useState(filters.search)
 
   // Debounce search → reset to page 1 on new search
@@ -66,27 +67,31 @@ export function TenantFilters({ filters, onChange }: TenantFiltersProps) {
         </SelectContent>
       </Select>
 
-      <Select
-        value={filters.tenantType || 'all'}
-        onValueChange={(val) => {
-          onChange({
-            tenantType: val === 'all' ? '' : (val as TenantFilters['tenantType']),
-            page: 1,
-          })
-        }}
-      >
-        <SelectTrigger className="w-full sm:w-36">
-          <SelectValue placeholder={TENANT_COPY.FILTER_ALL_TYPES} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{TENANT_COPY.FILTER_ALL_TYPES}</SelectItem>
-          {(Object.keys(TENANT_TYPE_LABELS) as (keyof typeof TENANT_TYPE_LABELS)[]).map((type) => (
-            <SelectItem key={type} value={type}>
-              {TENANT_TYPE_LABELS[type]}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {!hideTenantType && (
+        <Select
+          value={filters.tenantType || 'all'}
+          onValueChange={(val) => {
+            onChange({
+              tenantType: val === 'all' ? '' : (val as TenantFilters['tenantType']),
+              page: 1,
+            })
+          }}
+        >
+          <SelectTrigger className="w-full sm:w-36">
+            <SelectValue placeholder={TENANT_COPY.FILTER_ALL_TYPES} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{TENANT_COPY.FILTER_ALL_TYPES}</SelectItem>
+            {(Object.keys(TENANT_TYPE_LABELS) as (keyof typeof TENANT_TYPE_LABELS)[]).map(
+              (type) => (
+                <SelectItem key={type} value={type}>
+                  {TENANT_TYPE_LABELS[type]}
+                </SelectItem>
+              )
+            )}
+          </SelectContent>
+        </Select>
+      )}
     </div>
   )
 }

@@ -11,6 +11,13 @@ export type OnboardingStep =
   | 'units_complete'
   | 'active'
 
+export interface TenantManager {
+  id: string
+  fullName: string
+  email: string
+  status: string
+}
+
 export interface Tenant {
   id: string
   name: string | null
@@ -29,10 +36,70 @@ export interface Tenant {
   unitCount?: number
   pricePerUnit?: number
   onboardingStep?: OnboardingStep
-  propertyManager?: {
-    id: string
-    fullName: string
-    email: string
-    status: string
-  }
+  ownerGroupId?: string | null
+  propertyManager?: TenantManager
+  propertyManagers?: TenantManager[]
+}
+
+// ── Owner Group (multi-location ownership) ──────────────────────────────────
+
+export interface OwnerGroupRepresentative {
+  id: string
+  fullName: string
+  email: string
+  status: 'active' | 'invited' | 'removed'
+  joinedAt: string | null
+}
+
+export interface OwnerGroupLocation {
+  id: string
+  name: string | null
+  appDisplayName: string | null
+  logoUrl: string | null
+  primaryColor: string | null
+  secondaryColor: string | null
+  unitCount: number
+  memberCount: number
+  status: TenantStatus
+  pricePerUnit: number
+  mrr: number
+  propertyManagers: TenantManager[]
+  createdAt: string | null
+}
+
+export interface OwnerGroup {
+  id: string
+  name: string
+  locations: OwnerGroupLocation[]
+  representatives: OwnerGroupRepresentative[]
+  totalUnits: number
+  totalMembers: number
+  totalMrr: number
+  createdAt: string | null
+}
+
+export interface OwnerDashboardMetrics {
+  totalLocations: number
+  totalUnits: number
+  totalMembers: number
+  totalMrr: number
+  activeLocations: number
+  membersActiveThisWeek: number
+  challengesRunning: number
+}
+
+export interface OwnerLocationStats {
+  locationId: string
+  locationName: string
+  unitCount: number
+  memberCount: number
+  activeThisWeek: number
+  occupancyRate: number
+  mrr: number
+  challengesRunning: number
+  recentRegistrations: number
+}
+
+export interface OwnerLocationComparison {
+  locations: OwnerLocationStats[]
 }

@@ -11,19 +11,41 @@ import { TenantFilters } from './TenantFilters'
 import { TenantTableRow } from './TenantTableRow'
 import { AddComplexModal } from './AddComplexModal'
 import { TENANTS_PAGE_SIZE, TENANT_TABLE_COLUMNS, TENANT_COPY } from './constants'
+import type { TenantType } from '@/types/auth.types'
 import type { TenantFilters as TenantFiltersType, TenantFilterUpdate } from './tenant.types'
 
-const DEFAULT_FILTERS: TenantFiltersType = {
-  search: '',
-  status: '',
-  tenantType: '',
-  page: 1,
-  limit: TENANTS_PAGE_SIZE,
+interface TenantListProps {
+  defaultTenantType?: TenantType
 }
 
-export function TenantList() {
-  const [filters, setFilters] = useState<TenantFiltersType>(DEFAULT_FILTERS)
+const PAGE_CONFIG: Record<string, { title: string; description: string; showAdd: boolean }> = {
+  apartment: {
+    title: 'All Complexes',
+    description: 'Manage apartment complexes',
+    showAdd: true,
+  },
+  trainer: {
+    title: 'All Trainers',
+    description: 'Manage trainers and gym owners',
+    showAdd: false,
+  },
+  '': {
+    title: TENANT_COPY.PAGE_TITLE,
+    description: TENANT_COPY.PAGE_DESCRIPTION,
+    showAdd: true,
+  },
+}
+
+export function TenantList({ defaultTenantType }: TenantListProps) {
+  const [filters, setFilters] = useState<TenantFiltersType>({
+    search: '',
+    status: '',
+    tenantType: defaultTenantType ?? '',
+    page: 1,
+    limit: TENANTS_PAGE_SIZE,
+  })
   const [addModalOpen, setAddModalOpen] = useState(false)
+  const config = PAGE_CONFIG[defaultTenantType ?? ''] ?? PAGE_CONFIG['']
 
   const { data, isLoading, isError, refetch } = useTenants(filters)
 
@@ -35,25 +57,36 @@ export function TenantList() {
     setFilters((prev) => ({ ...prev, page: newPage }))
   }
 
+  // Client-side tenant type filter until API supports it
+  const filteredData = defaultTenantType
+    ? data?.data.filter((t) => t.tenant_type === defaultTenantType)
+    : data?.data
+
   const totalPages = data?.meta.totalPages ?? 1
-  const total = data?.meta.total ?? 0
+  const total = filteredData?.length ?? 0
 
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between">
-        <PageHeader title={TENANT_COPY.PAGE_TITLE} description={TENANT_COPY.PAGE_DESCRIPTION} />
-        <Button
-          onClick={() => {
-            setAddModalOpen(true)
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          {TENANT_COPY.ADD_COMPLEX_TITLE}
-        </Button>
+        <PageHeader title={config.title} description={config.description} />
+        {config.showAdd && (
+          <Button
+            onClick={() => {
+              setAddModalOpen(true)
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {TENANT_COPY.ADD_COMPLEX_TITLE}
+          </Button>
+        )}
       </div>
-      <AddComplexModal open={addModalOpen} onOpenChange={setAddModalOpen} />
+      {config.showAdd && <AddComplexModal open={addModalOpen} onOpenChange={setAddModalOpen} />}
 
-      <TenantFilters filters={filters} onChange={handleFilterChange} />
+      <TenantFilters
+        filters={filters}
+        onChange={handleFilterChange}
+        hideTenantType={Boolean(defaultTenantType)}
+      />
 
       <div className="rounded-md border">
         <Table>
@@ -82,7 +115,7 @@ export function TenantList() {
                 </td>
               </tr>
             </tbody>
-          ) : !data?.data.length ? (
+          ) : !filteredData?.length ? (
             <tbody>
               <tr>
                 <td colSpan={TENANT_TABLE_COLUMNS}>
@@ -96,7 +129,7 @@ export function TenantList() {
             </tbody>
           ) : (
             <tbody>
-              {data.data.map((tenant) => (
+              {filteredData.map((tenant) => (
                 <TenantTableRow key={tenant.id} tenant={tenant} />
               ))}
             </tbody>

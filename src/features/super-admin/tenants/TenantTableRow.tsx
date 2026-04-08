@@ -15,6 +15,7 @@ import type { BadgeStatus } from '@/components/shared/StatusBadge'
 import { MoreHorizontal } from 'lucide-react'
 import { TENANT_TYPE_LABELS, TENANT_COPY } from './constants'
 import { EditComplexModal } from './EditComplexModal'
+import { AssignOwnerGroupModal } from './AssignOwnerGroupModal'
 import { useResendInvite } from './useTenantActions'
 import type { TenantListItem } from './tenant.types'
 
@@ -24,6 +25,7 @@ interface TenantTableRowProps {
 
 export function TenantTableRow({ tenant }: TenantTableRowProps) {
   const [editOpen, setEditOpen] = useState(false)
+  const [assignOwnerOpen, setAssignOwnerOpen] = useState(false)
   const resendInvite = useResendInvite()
 
   const isApartment = tenant.tenant_type === 'apartment'
@@ -116,6 +118,15 @@ export function TenantTableRow({ tenant }: TenantTableRowProps) {
                   </DropdownMenuItem>
                 </>
               )}
+              {isApartment && (
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setAssignOwnerOpen(true)
+                  }}
+                >
+                  {TENANT_COPY.ASSIGN_LOCATION}
+                </DropdownMenuItem>
+              )}
               {canResendInvite && (
                 <DropdownMenuItem
                   onSelect={() => {
@@ -132,7 +143,17 @@ export function TenantTableRow({ tenant }: TenantTableRowProps) {
       </TableRow>
 
       {isApartment && (
-        <EditComplexModal open={editOpen} onOpenChange={setEditOpen} tenant={tenant} />
+        <>
+          <EditComplexModal open={editOpen} onOpenChange={setEditOpen} tenant={tenant} />
+          {assignOwnerOpen && (
+            <AssignOwnerGroupModal
+              open={assignOwnerOpen}
+              onOpenChange={setAssignOwnerOpen}
+              tenantId={tenant.id}
+              tenantName={tenant.app_display_name ?? ''}
+            />
+          )}
+        </>
       )}
     </>
   )

@@ -9,6 +9,9 @@ import type {
   SuspendTenantPayload,
   TCreateComplexPayload,
   TUpdateComplexPayload,
+  TCreateOwnerGroupPayload,
+  TAssignLocationPayload,
+  OwnerGroupListItem,
 } from './tenant.types'
 
 export const tenantService = {
@@ -63,5 +66,32 @@ export const tenantService = {
 
   async resendInvite(id: string): Promise<void> {
     await apiClient.post(API_ENDPOINTS.TENANTS.RESEND_INVITE(id))
+  },
+
+  // ── Owner Groups ──────────────────────────────────────────────────────────
+
+  async getOwnerGroups(): Promise<OwnerGroupListItem[]> {
+    const response = await apiClient.get<{ success: boolean; data: OwnerGroupListItem[] }>(
+      API_ENDPOINTS.OWNER_GROUPS.LIST
+    )
+    return response.data.data
+  },
+
+  async createOwnerGroup(
+    payload: TCreateOwnerGroupPayload
+  ): Promise<ApiResponse<OwnerGroupListItem>> {
+    const response = await apiClient.post<ApiResponse<OwnerGroupListItem>>(
+      API_ENDPOINTS.OWNER_GROUPS.CREATE,
+      payload
+    )
+    return response.data
+  },
+
+  async assignLocationToOwner(groupId: string, payload: TAssignLocationPayload): Promise<void> {
+    await apiClient.post(API_ENDPOINTS.OWNER_GROUPS.ASSIGN_LOCATION(groupId), payload)
+  },
+
+  async removeLocationFromOwner(groupId: string, locationId: string): Promise<void> {
+    await apiClient.delete(API_ENDPOINTS.OWNER_GROUPS.REMOVE_LOCATION(groupId, locationId))
   },
 }

@@ -38,7 +38,9 @@ export const API_ENDPOINTS = {
   PM_SETUP: {
     BRANDING: (id: string) => `/tenants/${id}/branding`,
     ADD_UNIT: (id: string) => `/tenants/${id}/units`,
+    UNIT_DETAIL: (tenantId: string, unitId: string) => `/tenants/${tenantId}/units/${unitId}`,
     BULK_UNITS: (id: string) => `/tenants/${id}/units/bulk`,
+    UNIT_SUMMARY: (id: string) => `/tenants/${id}/units/summary`,
     COMPLETE: (id: string) => `/tenants/${id}/onboarding/complete`,
   },
 
@@ -103,5 +105,49 @@ export const API_ENDPOINTS = {
     BULK_APPROVE: '/residents/bulk-approve',
     REMOVE: (id: string) => `/residents/${id}`,
     EXPORT: '/residents/export',
+  },
+
+  // ── Property Owner — Dashboard ──────────────────────────────────────────
+  OWNER_DASHBOARD: {
+    METRICS: '/owner/dashboard/metrics',
+    LOCATION_STATS: '/owner/dashboard/location-stats',
+    COMPARISON: '/owner/dashboard/comparison',
+  },
+
+  // ── Property Owner — Locations ──────────────────────────────────────────
+  OWNER_LOCATIONS: {
+    LIST: '/owner/locations',
+    CREATE: '/owner/locations',
+    DETAIL: (id: string) => `/owner/locations/${id}`,
+    STATS: (id: string) => `/owner/locations/${id}/stats`,
+    BRANDING: (id: string) => `/owner/locations/${id}/branding`,
+    MANAGERS: (id: string) => `/owner/locations/${id}/managers`,
+    ADD_MANAGER: (id: string) => `/owner/locations/${id}/managers`,
+    REMOVE_MANAGER: (locationId: string, managerId: string) =>
+      `/owner/locations/${locationId}/managers/${managerId}`,
+  },
+
+  // ── Property Owner — Representatives ────────────────────────────────────
+  OWNER_REPRESENTATIVES: {
+    LIST: '/owner/representatives',
+    INVITE: '/owner/representatives/invite',
+    REMOVE: (id: string) => `/owner/representatives/${id}`,
+  },
+
+  // ── Property Owner — Billing ────────────────────────────────────────────
+  OWNER_BILLING: {
+    OVERVIEW: '/owner/billing',
+    INVOICES: '/owner/billing/invoices',
+    PER_LOCATION: '/owner/billing/per-location',
+  },
+
+  // ── Super Admin — Owner Groups ──────────────────────────────────────────
+  OWNER_GROUPS: {
+    LIST: '/admin/owner-groups',
+    CREATE: '/admin/owner-groups',
+    DETAIL: (id: string) => `/admin/owner-groups/${id}`,
+    ASSIGN_LOCATION: (id: string) => `/admin/owner-groups/${id}/locations`,
+    REMOVE_LOCATION: (groupId: string, locationId: string) =>
+      `/admin/owner-groups/${groupId}/locations/${locationId}`,
   },
 } as const

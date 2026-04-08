@@ -83,5 +83,35 @@ export const updateComplexSchema = z.object({
     .optional(),
 })
 
+// ── Owner Group (Super Admin assigns locations to owners) ───────────────────
+
+export interface TCreateOwnerGroupPayload {
+  name: string
+  owner_full_name: string
+  owner_email: string
+}
+
+export const createOwnerGroupSchema = z.object({
+  name: z.string().min(3, 'Group name must be at least 3 characters'),
+  owner_full_name: z.string().min(2, 'Full name must be at least 2 characters'),
+  owner_email: z.email('Invalid email address'),
+})
+
+export interface TAssignLocationPayload {
+  tenant_id: string
+}
+
+export interface OwnerGroupListItem {
+  id: string
+  name: string
+  owner_full_name: string
+  owner_email: string
+  owner_status: 'invited' | 'active' | 'password_set'
+  location_count: number
+  total_units: number
+  total_mrr: number
+  created_at: string | null
+}
+
 // Re-export for convenience
 export type { TenantStatus, SubscriptionPlan, TenantType }

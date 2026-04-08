@@ -6,6 +6,7 @@ import type { LoginPayload, UserRole } from '@/types/auth.types'
 
 const ROLE_REDIRECT: Record<UserRole, string> = {
   super_admin: '/super-admin',
+  property_owner: '/property-owner',
   property_manager: '/dashboard',
   trainer: '/trainer',
 }

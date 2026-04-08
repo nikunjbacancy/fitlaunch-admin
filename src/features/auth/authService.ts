@@ -18,13 +18,13 @@ function mapApiUser(apiUser: ApiLoginResponse['data']['user']): AuthUser {
     role: apiUser.role,
     tenantId: apiUser.tenant_id,
     tenantName: null,
-    // tenantType is not returned by the login endpoint — derive from role
     tenantType:
-      apiUser.role === 'property_manager'
+      apiUser.role === 'property_manager' || apiUser.role === 'property_owner'
         ? 'apartment'
         : apiUser.role === 'trainer'
           ? 'trainer'
           : null,
+    ownerGroupId: apiUser.owner_group_id ?? null,
     isTwoFactorVerified: false,
   }
 }

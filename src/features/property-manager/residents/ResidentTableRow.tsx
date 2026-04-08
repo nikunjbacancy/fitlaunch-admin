@@ -50,7 +50,7 @@ export function ResidentTableRow({
           </div>
         </div>
       </TableCell>
-      <TableCell className="text-sm">{resident.unitNumber}</TableCell>
+      <TableCell className="text-sm">{resident.unitCode}</TableCell>
       <TableCell>
         <Badge variant="outline" className={`text-xs ${RESIDENT_STATUS_CLASSES[resident.status]}`}>
           {RESIDENT_STATUS_LABELS[resident.status]}

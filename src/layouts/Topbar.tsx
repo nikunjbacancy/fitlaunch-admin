@@ -4,6 +4,7 @@ import { Breadcrumb } from './Breadcrumb'
 
 const ROLE_LABELS: Record<string, string> = {
   super_admin: 'Super Admin',
+  property_owner: 'Property Owner',
   property_manager: 'Property Manager',
   trainer: 'Trainer',
 }

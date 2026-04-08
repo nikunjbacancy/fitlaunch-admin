@@ -60,12 +60,8 @@ export const SETUP_COPY = {
   UNITS_CSV_HINT: 'Only .csv files are supported',
   UNITS_IMPORT_BUTTON: 'Import {n} Units',
   UNITS_IMPORTING: 'Importing\u2026',
-  UNITS_BUILDING_LABEL: 'Building',
-  UNITS_BUILDING_PLACEHOLDER: 'Building A',
-  UNITS_BLOCK_LABEL: 'Block / Floor (optional)',
-  UNITS_BLOCK_PLACEHOLDER: 'Floor 3',
-  UNITS_NUMBER_LABEL: 'Unit Number',
-  UNITS_NUMBER_PLACEHOLDER: '301',
+  UNITS_CODE_LABEL: 'Unit Code',
+  UNITS_CODE_PLACEHOLDER: 'e.g. C-9, B-204, Apt 12',
   UNITS_ADD_BUTTON: 'Add Unit',
   UNITS_ADDING: 'Adding\u2026',
   UNITS_COUNT: '{n} units added',
@@ -88,9 +84,7 @@ export const SETUP_COPY = {
   COMPLETE_SUMMARY_UNITS: 'Units configured',
   // CSV preview
   CSV_PREVIEW_MORE: 'and {n} more\u2026',
-  CSV_COLUMN_BUILDING: 'Building',
-  CSV_COLUMN_BLOCK: 'Block',
-  CSV_COLUMN_UNIT: 'Unit',
+  CSV_COLUMN_CODE: 'Unit Code',
   // Import result
   IMPORT_IMPORTED: 'Imported:',
   IMPORT_SKIPPED: 'Skipped:',
@@ -98,6 +92,6 @@ export const SETUP_COPY = {
 
 export const MAX_LOGO_SIZE_BYTES = 2 * 1024 * 1024 // 2MB
 export const ACCEPTED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp']
-export const CSV_TEMPLATE_HEADER = 'building,block,unit_number'
-export const CSV_TEMPLATE_EXAMPLE = 'Building A,Floor 1,101'
+export const CSV_TEMPLATE_HEADER = 'code'
+export const CSV_TEMPLATE_EXAMPLE = 'C-9'
 export const CSV_PREVIEW_ROWS = 5

@@ -9,6 +9,7 @@ export const INVITE_ONBOARDING_REDIRECT: Record<string, string> = {
 }
 
 export const INVITE_REDIRECT_FALLBACK = '/pm/setup'
+export const INVITE_REDIRECT_LOGIN = '/login'
 
 export const INVITE_COPY = {
   // Left panel feature bullets

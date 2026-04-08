@@ -1,0 +1,16 @@
+export const OWNER_BRANDING_COPY = {
+  PAGE_TITLE: 'Location Branding',
+  PAGE_DESCRIPTION: 'Override branding settings for any of your locations',
+  SELECT_LOCATION: 'Select Location',
+  SELECT_LOCATION_PLACEHOLDER: 'Choose a location to configure',
+  FIELD_APP_NAME: 'App Display Name',
+  FIELD_APP_NAME_PLACEHOLDER: 'e.g. The Meridian Fitness',
+  FIELD_PRIMARY_COLOR: 'Primary Color',
+  FIELD_SECONDARY_COLOR: 'Secondary Color',
+  FIELD_LOGO: 'Logo',
+  BTN_SAVE: 'Save Branding',
+  SUCCESS_SAVED: 'Branding updated successfully',
+  ERROR_LOAD: 'Failed to load branding settings',
+  ERROR_LOAD_DESC: 'Could not retrieve branding for this location.',
+  NO_LOCATION: 'Select a location to manage its branding.',
+} as const

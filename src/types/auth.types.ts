@@ -1,4 +1,4 @@
-export type UserRole = 'super_admin' | 'property_manager' | 'trainer'
+export type UserRole = 'super_admin' | 'property_owner' | 'property_manager' | 'trainer'
 export type TenantType = 'apartment' | 'trainer'
 
 // Internal camelCase shape used throughout the app
@@ -10,6 +10,7 @@ export interface AuthUser {
   tenantId: string | null
   tenantName: string | null
   tenantType: TenantType | null
+  ownerGroupId: string | null
   isTwoFactorVerified: boolean
 }
 
@@ -23,6 +24,7 @@ export interface ApiUser {
   full_name: string
   role: UserRole
   tenant_id: string | null
+  owner_group_id: string | null
 }
 
 export interface ApiLoginData {

@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/table'
 import { useAuthStore } from '@/store/auth.store'
 import { useAddUnit, useBulkImportUnits } from './useSetup'
-import { addUnitSchema, type TUnit, type TAddUnitPayload } from './setup.types'
+import { addUnitSchema, buildUnitCode, type TUnit, type TAddUnitPayload } from './setup.types'
 import {
   SETUP_COPY,
   CSV_TEMPLATE_HEADER,
@@ -36,9 +36,7 @@ import type { TBulkImportResult } from './setup.types'
 type AddUnitFormValues = z.infer<typeof addUnitSchema>
 
 interface CsvRow {
-  building: string
-  block: string
-  unit_number: string
+  code: string
   valid: boolean
 }
 
@@ -61,20 +59,19 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
 
   const form = useForm<AddUnitFormValues>({
     resolver: zodResolver(addUnitSchema),
-    defaultValues: { building: '', block: '', unit_number: '' },
+    defaultValues: { prefix: '', unit_number: '' },
   })
+
+  const prefix = form.watch('prefix')
+  const unitNumber = form.watch('unit_number')
+  const previewCode = prefix && unitNumber ? buildUnitCode(prefix, unitNumber) : ''
 
   const parseCsv = (text: string): CsvRow[] => {
     const lines = text.trim().split('\n')
-    const dataLines = lines[0].toLowerCase().includes('building') ? lines.slice(1) : lines
+    const dataLines = lines[0].toLowerCase().includes('code') ? lines.slice(1) : lines
     return dataLines.map((line) => {
-      const cols = line.split(',').map((c) => c.trim())
-      return {
-        building: cols[0] ?? '',
-        block: cols[1] ?? '',
-        unit_number: cols[2] ?? '',
-        valid: Boolean(cols[0] && cols[2]),
-      }
+      const code = line.split(',')[0]?.trim() ?? ''
+      return { code, valid: code.length > 0 }
     })
   }
 
@@ -116,24 +113,13 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
   }
 
   const handleAddUnit = (values: AddUnitFormValues) => {
-    const payload: TAddUnitPayload = {
-      building: values.building,
-      unit_number: values.unit_number,
-      ...(values.block ? { block: values.block } : {}),
-    }
+    const code = buildUnitCode(values.prefix, values.unit_number)
+    const payload: TAddUnitPayload = { code }
     addUnit.mutate(
       { tenantId, payload },
       {
         onSuccess: (unit) => {
-          setManualUnits((prev) => [
-            ...prev,
-            {
-              ...unit,
-              building: unit.building || values.building,
-              block: unit.block ?? values.block ?? null,
-              unit_number: unit.unit_number || values.unit_number,
-            },
-          ])
+          setManualUnits((prev) => [...prev, unit])
           form.reset()
         },
       }
@@ -185,7 +171,6 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
       {/* CSV Tab */}
       {activeTab === 'csv' && (
         <div className="space-y-4">
-          {/* Template download link */}
           <div className="flex justify-end">
             <button
               type="button"
@@ -257,22 +242,14 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
                 <TableHeader>
                   <TableRow className="bg-kmvmt-bg border-zinc-200">
                     <TableHead className="text-xs font-semibold uppercase tracking-wider text-kmvmt-navy">
-                      {SETUP_COPY.CSV_COLUMN_BUILDING}
-                    </TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-kmvmt-navy">
-                      {SETUP_COPY.CSV_COLUMN_BLOCK}
-                    </TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-kmvmt-navy">
-                      {SETUP_COPY.CSV_COLUMN_UNIT}
+                      {SETUP_COPY.CSV_COLUMN_CODE}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {csvPreview.slice(0, CSV_PREVIEW_ROWS).map((row, i) => (
                     <TableRow key={i} className={!row.valid ? 'bg-red-50' : ''}>
-                      <TableCell className="text-sm text-kmvmt-navy">{row.building}</TableCell>
-                      <TableCell className="text-sm text-kmvmt-navy">{row.block}</TableCell>
-                      <TableCell className="text-sm text-kmvmt-navy">{row.unit_number}</TableCell>
+                      <TableCell className="text-sm text-kmvmt-navy">{row.code}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -288,7 +265,6 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
             </div>
           )}
 
-          {/* Import button */}
           {csvPreview.length > 0 && (
             <Button
               className="h-11 w-full bg-kmvmt-navy text-white hover:bg-kmvmt-blue-light/80 font-semibold"
@@ -301,7 +277,6 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
             </Button>
           )}
 
-          {/* Import result */}
           {importResult && (
             <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm space-y-1">
               <p className="text-zinc-700">
@@ -338,44 +313,25 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
               }}
               className="space-y-4"
             >
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
-                  name="building"
+                  name="prefix"
                   render={({ field }) => (
                     <FormItem className="space-y-1.5">
-                      <FormLabel
-                        htmlFor="unit_building"
-                        className="text-xs font-medium text-zinc-700"
-                      >
-                        {SETUP_COPY.UNITS_BUILDING_LABEL}
+                      <FormLabel className="text-xs font-medium text-zinc-700">
+                        {SETUP_COPY.UNITS_CODE_LABEL.split('/')[0]?.trim() ?? 'Block'}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          id="unit_building"
-                          placeholder={SETUP_COPY.UNITS_BUILDING_PLACEHOLDER}
-                          className="h-10 border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
+                          placeholder={
+                            SETUP_COPY.UNITS_CODE_PLACEHOLDER.split(',')[0]?.trim() ?? 'A'
+                          }
+                          className="h-10 border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy uppercase placeholder:text-kmvmt-navy/40 placeholder:normal-case focus-visible:ring-kmvmt-navy"
                           {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="block"
-                  render={({ field }) => (
-                    <FormItem className="space-y-1.5">
-                      <FormLabel htmlFor="unit_block" className="text-xs font-medium text-zinc-700">
-                        {SETUP_COPY.UNITS_BLOCK_LABEL}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          id="unit_block"
-                          placeholder={SETUP_COPY.UNITS_BLOCK_PLACEHOLDER}
-                          className="h-10 border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
-                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value.replace(/[^A-Za-z0-9]/g, ''))
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -387,18 +343,17 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
                   name="unit_number"
                   render={({ field }) => (
                     <FormItem className="space-y-1.5">
-                      <FormLabel
-                        htmlFor="unit_number"
-                        className="text-xs font-medium text-zinc-700"
-                      >
-                        {SETUP_COPY.UNITS_NUMBER_LABEL}
+                      <FormLabel className="text-xs font-medium text-zinc-700">
+                        Unit Number
                       </FormLabel>
                       <FormControl>
                         <Input
-                          id="unit_number"
-                          placeholder={SETUP_COPY.UNITS_NUMBER_PLACEHOLDER}
+                          placeholder="101"
                           className="h-10 border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value.replace(/[^A-Za-z0-9]/g, ''))
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -406,6 +361,15 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
                   )}
                 />
               </div>
+
+              {/* Code preview */}
+              {previewCode && (
+                <div className="flex items-center justify-between rounded-lg border border-kmvmt-navy bg-kmvmt-navy px-4 py-2.5">
+                  <p className="text-xs text-white/50">Generated Code</p>
+                  <p className="text-sm font-semibold tracking-wide text-white">{previewCode}</p>
+                </div>
+              )}
+
               <Button
                 type="submit"
                 className="bg-kmvmt-navy text-white hover:bg-kmvmt-blue-light/80 font-semibold"
@@ -416,7 +380,6 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
             </form>
           </Form>
 
-          {/* Manual units list */}
           {manualUnits.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs font-medium text-zinc-500">
@@ -431,14 +394,11 @@ export function UnitDirectoryStep({ onComplete }: UnitDirectoryStepProps) {
                       index < manualUnits.length - 1 && 'border-b border-zinc-100'
                     )}
                   >
-                    <span className="text-sm text-kmvmt-navy">
-                      {unit.building}
-                      {unit.block ? ` / ${unit.block}` : ''} / {unit.unit_number}
-                    </span>
+                    <span className="text-sm font-medium text-kmvmt-navy">{unit.code}</span>
                     <Button
                       variant="ghost"
                       size="sm"
-                      aria-label={`Remove unit ${unit.unit_number}`}
+                      aria-label={`Remove unit ${unit.code}`}
                       className="text-zinc-400 hover:text-red-600 hover:bg-red-50"
                       onClick={() => {
                         setManualUnits((prev) => prev.filter((u) => u.id !== unit.id))

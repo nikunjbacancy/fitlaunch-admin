@@ -12,7 +12,9 @@ interface TenantMetaCardProps {
 }
 
 export function TenantMetaCard({ tenant }: TenantMetaCardProps) {
-  const planClass = PLAN_BADGE_CLASSES[tenant.plan] ?? PLAN_BADGE_CLASSES.starter
+  const planClass = tenant.plan
+    ? (PLAN_BADGE_CLASSES[tenant.plan] ?? PLAN_BADGE_CLASSES.starter)
+    : PLAN_BADGE_CLASSES.starter
 
   return (
     <Card>
@@ -21,15 +23,15 @@ export function TenantMetaCard({ tenant }: TenantMetaCardProps) {
           {tenant.logoUrl ? (
             <img
               src={tenant.logoUrl}
-              alt={`${tenant.name} logo`}
+              alt={`${tenant.name ?? ''} logo`}
               className="h-14 w-14 rounded-lg object-cover border"
             />
           ) : (
             <div
               className="h-14 w-14 rounded-lg border flex items-center justify-center"
-              style={{ backgroundColor: tenant.primaryColor + '20' }}
+              style={{ backgroundColor: (tenant.primaryColor ?? '') + '20' }}
             >
-              <Building2 className="h-7 w-7" style={{ color: tenant.primaryColor }} />
+              <Building2 className="h-7 w-7" style={{ color: tenant.primaryColor ?? undefined }} />
             </div>
           )}
           <div className="flex-1 min-w-0">
@@ -39,7 +41,7 @@ export function TenantMetaCard({ tenant }: TenantMetaCardProps) {
               <StatusBadge status={tenant.status as BadgeStatus} />
               <Badge variant="outline">{TENANT_TYPE_LABELS[tenant.tenantType]}</Badge>
               <Badge variant="outline" className={planClass}>
-                {PLAN_LABELS[tenant.plan]}
+                {tenant.plan ? PLAN_LABELS[tenant.plan] : ''}
               </Badge>
             </div>
           </div>

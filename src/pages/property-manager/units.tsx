@@ -1,8 +1,6 @@
+import React from 'react'
+import { UnitDirectory } from '@/features/property-manager/units/UnitDirectory'
+
 export default function UnitsPage(): React.ReactElement {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-semibold">Units</h1>
-      <p className="text-muted-foreground mt-2">Coming soon.</p>
-    </div>
-  )
+  return <UnitDirectory />
 }

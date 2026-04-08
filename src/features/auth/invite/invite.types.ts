@@ -4,7 +4,7 @@ import type { UserRole } from '@/types/auth.types'
 export interface TInviteValidateResponse {
   full_name: string
   email: string
-  complex_name: string
+  complex_name: string | null
 }
 
 export interface TInviteAcceptPayload {
@@ -21,13 +21,15 @@ export interface TInviteAcceptResponse {
     full_name: string
     email: string
     role: UserRole
-    tenant_id: string
+    tenant_id: string | null
+    owner_group_id: string | null
   }
   tenant: {
     id: string
     name: string | null
     onboarding_step: string
-  }
+    owner_group_id: string | null
+  } | null
 }
 
 export const acceptInviteSchema = z

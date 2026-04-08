@@ -52,6 +52,14 @@ const router = createBrowserRouter([
             element: lazyEl(() => import('@/pages/super-admin/tenant-detail')),
           },
           {
+            path: '/super-admin/owner-groups',
+            element: lazyEl(() => import('@/pages/super-admin/owner-groups')),
+          },
+          {
+            path: '/super-admin/trainers',
+            element: lazyEl(() => import('@/pages/super-admin/trainers')),
+          },
+          {
             path: '/super-admin/onboarding',
             element: lazyEl(() => import('@/pages/super-admin/onboarding')),
           },
@@ -74,6 +82,50 @@ const router = createBrowserRouter([
           {
             path: '/super-admin/support',
             element: lazyEl(() => import('@/pages/super-admin/support')),
+          },
+        ],
+      },
+    ],
+  },
+
+  // ─── Property Owner (Admin layout + role guard + 2FA) ─────────────────────
+  {
+    element: <ProtectedRoute allowedRoles={['property_owner']} requireTwoFactor />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          {
+            path: '/property-owner',
+            element: lazyEl(() => import('@/pages/property-owner/dashboard')),
+          },
+          {
+            path: '/property-owner/locations',
+            element: lazyEl(() => import('@/pages/property-owner/locations')),
+          },
+          {
+            path: '/property-owner/locations/:id',
+            element: lazyEl(() => import('@/pages/property-owner/location-detail')),
+          },
+          {
+            path: '/property-owner/comparison',
+            element: lazyEl(() => import('@/pages/property-owner/comparison')),
+          },
+          {
+            path: '/property-owner/managers',
+            element: lazyEl(() => import('@/pages/property-owner/managers')),
+          },
+          {
+            path: '/property-owner/representatives',
+            element: lazyEl(() => import('@/pages/property-owner/representatives')),
+          },
+          {
+            path: '/property-owner/branding',
+            element: lazyEl(() => import('@/pages/property-owner/branding')),
+          },
+          {
+            path: '/property-owner/billing',
+            element: lazyEl(() => import('@/pages/property-owner/billing')),
           },
         ],
       },

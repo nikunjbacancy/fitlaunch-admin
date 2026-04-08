@@ -8,12 +8,14 @@ interface AuthState {
   isAuthenticated: boolean
   isRestoringSession: boolean
   tenantOnboardingStep: string | null
+  isOwnerManagedTenant: boolean
 
   // Actions
   setUser: (user: AuthUser, accessToken: string, twoFactorVerified?: boolean) => void
   setTwoFactorVerified: () => void
   setSessionRestored: () => void
   setTenantOnboardingStep: (step: string) => void
+  setOwnerManagedTenant: (value: boolean) => void
   logout: () => void
 }
 
@@ -23,6 +25,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
   isAuthenticated: false,
   isRestoringSession: true, // true until the first refresh attempt completes
   tenantOnboardingStep: null,
+  isOwnerManagedTenant: false,
 
   setUser: (user, accessToken, twoFactorVerified = false) => {
     setAccessToken(accessToken)
@@ -45,6 +48,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
     set({ tenantOnboardingStep: step })
   },
 
+  setOwnerManagedTenant: (value) => {
+    set({ isOwnerManagedTenant: value })
+  },
+
   logout: () => {
     setAccessToken(null)
     set({
@@ -52,6 +59,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
       isAuthenticated: false,
       isTwoFactorVerified: false,
       tenantOnboardingStep: null,
+      isOwnerManagedTenant: false,
     })
   },
 }))

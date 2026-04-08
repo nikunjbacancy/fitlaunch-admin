@@ -119,4 +119,27 @@ export const TENANT_COPY = {
   // Row actions
   VIEW_DETAILS_LABEL: 'View Details',
   EDIT_COMPLEX_LABEL: 'Edit Complex',
+  // Owner Groups
+  OWNER_GROUPS_TITLE: 'Owner Groups',
+  OWNER_GROUPS_DESCRIPTION: 'Multi-location ownership groups',
+  ADD_OWNER_GROUP: 'Create Owner Group',
+  ADD_OWNER_GROUP_TITLE: 'Create Owner Group',
+  ADD_OWNER_GROUP_DESCRIPTION:
+    'Create an ownership group and invite the primary owner representative.',
+  OWNER_GROUP_NAME: 'Group Name',
+  OWNER_GROUP_NAME_PLACEHOLDER: 'e.g. Meridian Properties LLC',
+  OWNER_NAME: 'Owner Full Name',
+  OWNER_NAME_PLACEHOLDER: 'e.g. Robert Johnson',
+  OWNER_EMAIL: 'Owner Email',
+  OWNER_EMAIL_PLACEHOLDER: 'e.g. robert@meridianprops.com',
+  OWNER_GROUP_SUBMIT: 'Create & Send Invite',
+  OWNER_GROUP_SUCCESS: 'Owner group created. Invite sent.',
+  ASSIGN_LOCATION: 'Assign to Owner Group',
+  ASSIGN_LOCATION_TITLE: 'Assign Location to Owner',
+  ASSIGN_LOCATION_DESCRIPTION: 'Link this apartment complex to an existing ownership group.',
+  ASSIGN_LOCATION_SELECT: 'Select Owner Group',
+  ASSIGN_LOCATION_SUBMIT: 'Assign',
+  ASSIGN_LOCATION_SUCCESS: 'Location assigned to owner group.',
+  UNASSIGN_LOCATION: 'Remove from Owner Group',
+  UNASSIGN_LOCATION_SUCCESS: 'Location removed from owner group.',
 } as const

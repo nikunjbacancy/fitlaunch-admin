@@ -15,6 +15,10 @@ import {
   ClipboardList,
   MessageSquare,
   TrendingUp,
+  MapPin,
+  GitCompareArrows,
+  UserPlus,
+  UsersRound,
 } from 'lucide-react'
 import type { UserRole } from '@/types/auth.types'
 
@@ -36,10 +40,17 @@ export const NAV_CONFIG: Record<UserRole, NavGroup[]> = {
       items: [{ label: 'Dashboard', path: '/super-admin', icon: LayoutDashboard }],
     },
     {
-      title: 'Tenant Management',
+      title: 'Apartments',
       items: [
-        { label: 'All Tenants', path: '/super-admin/tenants', icon: Building2 },
-        { label: 'B2B Onboarding', path: '/super-admin/onboarding', icon: UserCheck },
+        { label: 'All Complexes', path: '/super-admin/tenants', icon: Building2 },
+        { label: 'Owner Groups', path: '/super-admin/owner-groups', icon: UsersRound },
+      ],
+    },
+    {
+      title: 'Trainers & Gyms',
+      items: [
+        { label: 'All Trainers', path: '/super-admin/trainers', icon: Dumbbell },
+        { label: 'Onboarding Queue', path: '/super-admin/onboarding', icon: UserCheck },
       ],
     },
     {
@@ -55,6 +66,33 @@ export const NAV_CONFIG: Record<UserRole, NavGroup[]> = {
         { label: 'Analytics', path: '/super-admin/analytics', icon: BarChart3 },
         { label: 'Feature Flags', path: '/super-admin/feature-flags', icon: ToggleLeft },
         { label: 'Support Queue', path: '/super-admin/support', icon: HeadphonesIcon },
+      ],
+    },
+  ],
+
+  property_owner: [
+    {
+      items: [{ label: 'Dashboard', path: '/property-owner', icon: LayoutDashboard }],
+    },
+    {
+      title: 'Locations',
+      items: [
+        { label: 'All Locations', path: '/property-owner/locations', icon: MapPin },
+        { label: 'Compare', path: '/property-owner/comparison', icon: GitCompareArrows },
+      ],
+    },
+    {
+      title: 'Team',
+      items: [
+        { label: 'Managers', path: '/property-owner/managers', icon: Users },
+        { label: 'Representatives', path: '/property-owner/representatives', icon: UserPlus },
+      ],
+    },
+    {
+      title: 'Settings',
+      items: [
+        { label: 'Branding', path: '/property-owner/branding', icon: Palette },
+        { label: 'Billing', path: '/property-owner/billing', icon: CreditCard },
       ],
     },
   ],

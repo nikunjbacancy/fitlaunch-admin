@@ -7,18 +7,18 @@ export interface TBrandingPayload {
   logo?: File
 }
 
+export type UnitStatus = 'vacant' | 'occupied'
+
 export interface TUnit {
   id: string
-  building: string
-  block: string | null
-  unit_number: string
-  status: 'vacant' | 'occupied'
+  code: string
+  status: UnitStatus
+  resident_count: number
+  created_at: string | null
 }
 
 export interface TAddUnitPayload {
-  building: string
-  block?: string
-  unit_number: string
+  code: string
 }
 
 export interface TBulkImportResult {
@@ -36,8 +36,21 @@ export const brandingSchema = z.object({
     .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color (e.g. #FF5500)'),
 })
 
+const ALPHANUMERIC_REGEX = /^[A-Za-z0-9]+$/
+
 export const addUnitSchema = z.object({
-  building: z.string().min(1, 'Building is required'),
-  block: z.string().optional(),
-  unit_number: z.string().min(1, 'Unit number is required'),
+  prefix: z
+    .string()
+    .min(1, 'Prefix is required')
+    .max(20, 'Prefix is too long')
+    .regex(ALPHANUMERIC_REGEX, 'Letters and numbers only'),
+  unit_number: z
+    .string()
+    .min(1, 'Unit number is required')
+    .max(20, 'Unit number is too long')
+    .regex(ALPHANUMERIC_REGEX, 'Letters and numbers only'),
 })
+
+export function buildUnitCode(prefix: string, unitNumber: string): string {
+  return `${prefix.toUpperCase().trim()}-${unitNumber.trim()}`
+}

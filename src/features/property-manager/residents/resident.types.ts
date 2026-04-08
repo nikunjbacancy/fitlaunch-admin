@@ -4,7 +4,7 @@ export interface Resident {
   id: string
   fullName: string
   email: string
-  unitNumber: string
+  unitCode: string
   unitId: string
   status: ResidentStatus
   joinedAt: string

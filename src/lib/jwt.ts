@@ -8,6 +8,7 @@ interface JwtPayload {
   full_name?: string
   role?: UserRole
   tenant_id?: string | null
+  owner_group_id?: string | null
   exp?: number
   iat?: number
 }
@@ -31,7 +32,7 @@ export function jwtToAuthUser(token: string): AuthUser | null {
   if (!id || !payload.email || !payload.role) return null
 
   const tenantType: TenantType | null =
-    payload.role === 'property_manager'
+    payload.role === 'property_manager' || payload.role === 'property_owner'
       ? 'apartment'
       : payload.role === 'trainer'
         ? 'trainer'
@@ -45,6 +46,7 @@ export function jwtToAuthUser(token: string): AuthUser | null {
     tenantId: payload.tenant_id ?? null,
     tenantName: null,
     tenantType,
+    ownerGroupId: payload.owner_group_id ?? null,
     isTwoFactorVerified: false,
   }
 }

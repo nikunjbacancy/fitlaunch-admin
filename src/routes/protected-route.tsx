@@ -14,8 +14,14 @@ export function ProtectedRoute({
   requireTwoFactor = false,
   skipOnboardingCheck = false,
 }: ProtectedRouteProps): React.ReactElement {
-  const { isAuthenticated, user, isTwoFactorVerified, isRestoringSession, tenantOnboardingStep } =
-    useAuthStore()
+  const {
+    isAuthenticated,
+    user,
+    isTwoFactorVerified,
+    isRestoringSession,
+    tenantOnboardingStep,
+    isOwnerManagedTenant,
+  } = useAuthStore()
   const { pathname } = useLocation()
 
   // Wait for session restore before making any auth decisions
@@ -40,12 +46,14 @@ export function ProtectedRoute({
   }
 
   // Redirect property managers through onboarding wizard until they are active
+  // Owner-managed PMs skip the wizard — branding and units are handled by the owner
   if (
     !skipOnboardingCheck &&
     user.role === 'property_manager' &&
     pathname !== '/pm/setup' &&
     tenantOnboardingStep !== null &&
-    tenantOnboardingStep !== 'active'
+    tenantOnboardingStep !== 'active' &&
+    !isOwnerManagedTenant
   ) {
     return <Navigate to="/pm/setup" replace />
   }

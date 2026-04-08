@@ -25,6 +25,7 @@ import { acceptInviteSchema } from './invite.types'
 import {
   INVITE_ONBOARDING_REDIRECT,
   INVITE_REDIRECT_FALLBACK,
+  INVITE_REDIRECT_LOGIN,
   INVITE_COPY,
 } from './invite.constants'
 import { getErrorMessage, getErrorCode } from '@/lib/errors'
@@ -92,7 +93,20 @@ export function InviteAcceptPage() {
     acceptInvite.mutate(
       { token, password: values.password },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          // Property Owner: redirect to login (no onboarding wizard, 2FA at login time)
+          if (data.user.role === 'property_owner') {
+            void navigate(INVITE_REDIRECT_LOGIN, { replace: true })
+            return
+          }
+
+          // PM on owner-managed location: redirect to login (skip setup wizard)
+          if (data.user.role === 'property_manager' && data.tenant?.owner_group_id) {
+            void navigate(INVITE_REDIRECT_LOGIN, { replace: true })
+            return
+          }
+
+          // Standalone PM (SA-created): continue to setup wizard
           const step = tenantOnboardingStep ?? 'password_set'
           const redirectPath = INVITE_ONBOARDING_REDIRECT[step] ?? INVITE_REDIRECT_FALLBACK
           void navigate(redirectPath, { replace: true })
@@ -224,7 +238,7 @@ interface RightPanelContentProps {
   isLoading: boolean
   isError: boolean
   error: unknown
-  invite: { full_name: string; complex_name: string } | undefined
+  invite: { full_name: string; complex_name: string | null } | undefined
   form: ReturnType<typeof useForm<FormValues>>
   showPassword: boolean
   showConfirm: boolean
