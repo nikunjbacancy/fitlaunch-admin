@@ -19,12 +19,12 @@ import kmvmtLogo from '@/assets/logo_bg_white.png'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAuthStore } from '@/store/auth.store'
+// import { useAuthStore } from '@/store/auth.store' // see note below — wizard redirect disabled
 import { useValidateInviteToken, useAcceptInvite } from './useInvite'
 import { acceptInviteSchema } from './invite.types'
 import {
-  INVITE_ONBOARDING_REDIRECT,
-  INVITE_REDIRECT_FALLBACK,
+  // INVITE_ONBOARDING_REDIRECT, // disabled: branding/units wizard removed from invite flow
+  // INVITE_REDIRECT_FALLBACK,   // disabled: branding/units wizard removed from invite flow
   INVITE_REDIRECT_LOGIN,
   INVITE_COPY,
 } from './invite.constants'
@@ -64,7 +64,9 @@ export function InviteAcceptPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const token = searchParams.get('token')
-  const tenantOnboardingStep = useAuthStore((s) => s.tenantOnboardingStep)
+  // NOTE: tenantOnboardingStep previously drove the multi-step wizard redirect.
+  // Kept commented so we can restore the wizard flow if product direction changes.
+  // const tenantOnboardingStep = useAuthStore((s) => s.tenantOnboardingStep)
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
@@ -93,23 +95,15 @@ export function InviteAcceptPage() {
     acceptInvite.mutate(
       { token, password: values.password },
       {
-        onSuccess: (data) => {
-          // Property Owner: redirect to login (no onboarding wizard, 2FA at login time)
-          if (data.user.role === 'property_owner') {
-            void navigate(INVITE_REDIRECT_LOGIN, { replace: true })
-            return
-          }
-
-          // PM on owner-managed location: redirect to login (skip setup wizard)
-          if (data.user.role === 'property_manager' && data.tenant?.owner_group_id) {
-            void navigate(INVITE_REDIRECT_LOGIN, { replace: true })
-            return
-          }
-
-          // Standalone PM (SA-created): continue to setup wizard
-          const step = tenantOnboardingStep ?? 'password_set'
-          const redirectPath = INVITE_ONBOARDING_REDIRECT[step] ?? INVITE_REDIRECT_FALLBACK
-          void navigate(redirectPath, { replace: true })
+        onSuccess: () => {
+          // All roles now redirect to login after setting their password.
+          // Branding and unit directory setup moved post-login (handled via nav + in-app pages).
+          //
+          // Previous behavior (kept for reference — restore if wizard returns):
+          //   - property_owner → /login
+          //   - owner-managed PM → /login
+          //   - standalone PM → /pm/setup wizard based on tenantOnboardingStep
+          void navigate(INVITE_REDIRECT_LOGIN, { replace: true })
         },
         onError: (err) => {
           setSubmitError(getErrorMessage(err))

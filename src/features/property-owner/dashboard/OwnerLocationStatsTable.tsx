@@ -1,24 +1,28 @@
-import { useNavigate } from 'react-router-dom'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { DataTableSkeleton } from '@/components/shared/DataTableSkeleton'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowRight, Building2, LogIn, MapPin } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorState } from '@/components/shared/ErrorState'
-import { EmptyState } from '@/components/shared/EmptyState'
 import { useOwnerLocationStats } from './useOwnerDashboard'
+import { OWNER_DASHBOARD_COPY } from './constants'
+import { cn } from '@/lib/utils'
+import type { OwnerLocationStats } from '@/types/tenant.types'
 
-const COLUMNS = 7
-const TABLE_TITLE = 'Location Performance'
-const TABLE_ERROR = 'Failed to load location stats'
-const TABLE_EMPTY = 'No locations yet'
-const TABLE_EMPTY_DESC = 'Add your first location to see stats here.'
+const STATUS_PILL: Record<OwnerLocationStats['status'], string> = {
+  active: 'bg-emerald-50 text-emerald-700',
+  suspended: 'bg-kmvmt-burgundy/10 text-kmvmt-burgundy',
+  payment_failed: 'bg-kmvmt-red-dark/10 text-kmvmt-red-dark',
+}
 
+const STATUS_LABEL: Record<OwnerLocationStats['status'], string> = {
+  active: OWNER_DASHBOARD_COPY.STATUS_ACTIVE,
+  suspended: OWNER_DASHBOARD_COPY.STATUS_SUSPENDED,
+  payment_failed: OWNER_DASHBOARD_COPY.STATUS_PAYMENT_FAILED,
+}
+
+/**
+ * "Step Into Location" launcher (CO #6).
+ * SA-style listing card showing the owner's locations with a click-to-step-in action.
+ */
 export function OwnerLocationStatsTable() {
   const navigate = useNavigate()
   const { data, isLoading, isError, refetch } = useOwnerLocationStats()
@@ -26,8 +30,8 @@ export function OwnerLocationStatsTable() {
   if (isError) {
     return (
       <ErrorState
-        title={TABLE_ERROR}
-        description={TABLE_ERROR}
+        title="Failed to load locations"
+        description="Could not retrieve location performance data."
         onRetry={() => {
           void refetch()
         }}
@@ -35,61 +39,91 @@ export function OwnerLocationStatsTable() {
     )
   }
 
-  if (isLoading) {
-    return <DataTableSkeleton columns={COLUMNS} rows={5} />
-  }
-
-  const stats = data ?? []
-
-  if (stats.length === 0) {
-    return <EmptyState title={TABLE_EMPTY} description={TABLE_EMPTY_DESC} />
-  }
+  const locations = data ?? []
+  const count = locations.length
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-kmvmt-navy">{TABLE_TITLE}</h3>
-      <div className="rounded-lg border border-zinc-200 bg-kmvmt-white">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-kmvmt-navy">Location</TableHead>
-              <TableHead className="text-kmvmt-navy">Units</TableHead>
-              <TableHead className="text-kmvmt-navy">Members</TableHead>
-              <TableHead className="text-kmvmt-navy">Active This Week</TableHead>
-              <TableHead className="text-kmvmt-navy">Occupancy</TableHead>
-              <TableHead className="text-kmvmt-navy">MRR</TableHead>
-              <TableHead className="text-kmvmt-navy">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {stats.map((location) => (
-              <TableRow key={location.locationId}>
-                <TableCell className="font-medium text-kmvmt-navy">
-                  {location.locationName}
-                </TableCell>
-                <TableCell className="text-kmvmt-navy">{location.unitCount}</TableCell>
-                <TableCell className="text-kmvmt-navy">{location.memberCount}</TableCell>
-                <TableCell className="text-kmvmt-navy">{location.activeThisWeek}</TableCell>
-                <TableCell className="text-kmvmt-navy">
-                  {String(Math.round(location.occupancyRate * 100))}%
-                </TableCell>
-                <TableCell className="text-kmvmt-navy">${location.mrr}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-kmvmt-navy hover:bg-kmvmt-bg"
-                    onClick={() => {
-                      void navigate(`/property-owner/locations/${location.locationId}`)
-                    }}
-                  >
-                    View
-                  </Button>
-                </TableCell>
-              </TableRow>
+    <div className="flex flex-col rounded-xl bg-kmvmt-white shadow-[0px_10px_40px_rgba(25,38,64,0.04)]">
+      {/* Header */}
+      <div className="flex items-start justify-between p-6 pb-4">
+        <div>
+          <p className="text-xs font-extrabold uppercase tracking-[0.1em] text-kmvmt-navy/40">
+            {OWNER_DASHBOARD_COPY.SECTION_LOCATIONS}
+          </p>
+          {count > 0 && (
+            <span className="mt-2 inline-flex items-center rounded-full bg-kmvmt-bg px-3 py-1 text-[10px] font-black uppercase tracking-wider text-kmvmt-navy/60">
+              {count} {count === 1 ? 'location' : 'locations'}
+            </span>
+          )}
+        </div>
+        <Link
+          to="/property-owner/locations"
+          className="flex items-center gap-1 text-xs font-medium text-kmvmt-navy/40 transition-colors hover:text-kmvmt-navy"
+        >
+          {OWNER_DASHBOARD_COPY.LOCATIONS_VIEW_ALL}
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
+
+      {/* List */}
+      <div className="flex-1 px-4 pb-4">
+        {isLoading ? (
+          <div className="space-y-2 p-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-xl" />
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        ) : count === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-kmvmt-bg text-kmvmt-navy/40">
+              <MapPin className="h-5 w-5" />
+            </div>
+            <p className="text-xs text-kmvmt-navy/40">{OWNER_DASHBOARD_COPY.LOCATIONS_EMPTY}</p>
+          </div>
+        ) : (
+          <div>
+            {locations.map((loc) => (
+              <button
+                key={loc.locationId}
+                type="button"
+                // TODO: When backend supports owner→PM impersonation, route to /property-manager/dashboard with location context.
+                onClick={() => {
+                  void navigate(`/property-owner/locations/${loc.locationId}`)
+                }}
+                className="group flex w-full items-center gap-4 rounded-xl px-2 py-4 text-left transition-colors hover:bg-kmvmt-bg/50"
+              >
+                {/* Icon tile */}
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-kmvmt-bg text-kmvmt-navy">
+                  <Building2 className="h-5 w-5" />
+                </div>
+
+                {/* Info */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-kmvmt-navy">{loc.locationName}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-tight text-kmvmt-navy/40">
+                    {loc.unitCount} units · {loc.occupancyRate}% occ · ${loc.mrr.toLocaleString()}{' '}
+                    MRR
+                  </p>
+                </div>
+
+                {/* Status pill */}
+                <span
+                  className={cn(
+                    'shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider',
+                    STATUS_PILL[loc.status]
+                  )}
+                >
+                  {STATUS_LABEL[loc.status]}
+                </span>
+
+                {/* Step-in arrow (visible on hover) */}
+                <span className="shrink-0 text-kmvmt-navy/30 transition-colors group-hover:text-kmvmt-navy">
+                  <LogIn className="h-4 w-4" />
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

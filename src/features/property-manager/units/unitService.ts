@@ -49,9 +49,12 @@ export const unitService = {
   async bulkImport(tenantId: string, file: File): Promise<TBulkImportResult> {
     const form = new FormData()
     form.append('file', file)
+    // Override the instance-wide Content-Type (application/json) so the browser
+    // sets multipart/form-data with the correct boundary for this upload.
     const response = await apiClient.post<ApiResponse<TBulkImportResult>>(
       API_ENDPOINTS.PM_SETUP.BULK_UNITS(tenantId),
-      form
+      form,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
     )
     return response.data.data
   },

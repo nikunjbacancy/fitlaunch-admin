@@ -1,18 +1,9 @@
 import { useState } from 'react'
-import { Check, X, Globe, Users, Loader2 } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { AlertCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useReviewApplication } from './useOnboardingQueue'
-import {
-  ONBOARDING_STATUS_LABELS,
-  ONBOARDING_STATUS_CLASSES,
-  BUSINESS_TYPE_LABELS,
-  ONBOARDING_COPY,
-} from './onboarding.constants'
+import { ONBOARDING_COPY } from './onboarding.constants'
 import type { OnboardingApplication } from './onboarding.types'
 
 interface OnboardingReviewCardProps {
@@ -20,20 +11,40 @@ interface OnboardingReviewCardProps {
 }
 
 export function OnboardingReviewCard({ application }: OnboardingReviewCardProps) {
-  const [notes, setNotes] = useState('')
   const [confirmAction, setConfirmAction] = useState<'approved' | 'rejected' | null>(null)
   const { mutate: review, isPending } = useReviewApplication()
 
-  const isPending_ = application.status === 'pending'
+  const isPendingStatus = application.status === 'pending'
+  const isRejected = application.status === 'rejected'
+  const isApproved = application.status === 'approved'
+
+  const initials = application.tenantName
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+
+  const submittedDate = new Date(application.submittedAt)
+  const formattedDate = submittedDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  })
+  const formattedTime = submittedDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+
+  const isHighPriority = (application.memberCount ?? 0) > 50
 
   const handleReview = () => {
     if (!confirmAction) return
     review(
-      { id: application.id, payload: { status: confirmAction, notes: notes || undefined } },
+      { id: application.id, payload: { status: confirmAction } },
       {
         onSuccess: () => {
           setConfirmAction(null)
-          setNotes('')
         },
       }
     )
@@ -41,126 +52,130 @@ export function OnboardingReviewCard({ application }: OnboardingReviewCardProps)
 
   return (
     <>
-      <Card className="hover:shadow-sm transition-shadow">
-        <CardContent className="p-5 space-y-4">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="font-semibold text-foreground">{application.tenantName}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{application.ownerEmail}</p>
-            </div>
-            <Badge
-              variant="outline"
-              className={`text-xs shrink-0 ${ONBOARDING_STATUS_CLASSES[application.status]}`}
-            >
-              {ONBOARDING_STATUS_LABELS[application.status]}
-            </Badge>
-          </div>
+      <div
+        className={`relative flex items-center gap-6 px-8 py-6 transition-colors hover:bg-kmvmt-bg/30 ${
+          isRejected ? 'border-l-[3px] border-kmvmt-red-dark' : 'border-l-[3px] border-transparent'
+        }`}
+      >
+        {/* Avatar */}
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-kmvmt-navy text-sm font-bold text-white">
+          {initials}
+        </div>
 
-          {/* Meta grid */}
-          <div className="grid grid-cols-2 gap-y-2 text-xs">
-            <div>
-              <p className="text-muted-foreground">{ONBOARDING_COPY.CARD_BUSINESS_TYPE}</p>
-              <p className="font-medium mt-0.5">{BUSINESS_TYPE_LABELS[application.businessType]}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">{ONBOARDING_COPY.CARD_PLAN}</p>
-              <p className="font-medium mt-0.5 capitalize">{application.plan}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">{ONBOARDING_COPY.CARD_OWNER}</p>
-              <p className="font-medium mt-0.5">{application.ownerName}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Submitted</p>
-              <p className="font-medium mt-0.5">
-                {new Date(application.submittedAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-
-          {/* Extra info */}
-          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-            {application.website && (
-              <a
-                href={application.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-foreground transition-colors"
-              >
-                <Globe className="h-3.5 w-3.5" />
-                {ONBOARDING_COPY.CARD_WEBSITE}
-              </a>
-            )}
-            {application.memberCount !== null && (
-              <span className="flex items-center gap-1">
-                <Users className="h-3.5 w-3.5" />
-                {application.memberCount} {ONBOARDING_COPY.CARD_MEMBERS}
+        {/* Company + date + badge */}
+        <div className="w-44 shrink-0">
+          <p className="text-sm font-bold tracking-tight text-kmvmt-navy">
+            {application.tenantName}
+          </p>
+          <p className="mt-0.5 text-[11px] text-kmvmt-navy/50">
+            Submitted: {formattedDate}, {formattedTime}
+          </p>
+          <div className="mt-2">
+            {isRejected ? (
+              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-kmvmt-red-dark">
+                <AlertCircle className="h-3 w-3" />
+                {ONBOARDING_COPY.BADGE_ACTION_REQUIRED}
+              </span>
+            ) : isApproved ? (
+              <span className="inline-block rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                {ONBOARDING_COPY.BADGE_APPROVED}
+              </span>
+            ) : isHighPriority ? (
+              <span className="inline-block rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-600">
+                {ONBOARDING_COPY.BADGE_HIGH_PRIORITY}
+              </span>
+            ) : (
+              <span className="inline-block rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                {ONBOARDING_COPY.BADGE_STANDARD}
               </span>
             )}
           </div>
+        </div>
 
-          {/* Review notes (for already reviewed) */}
-          {application.notes && (
-            <div className="rounded-md bg-muted p-2.5 text-xs text-muted-foreground">
-              <span className="font-medium">Notes: </span>
-              {application.notes}
-            </div>
-          )}
+        {/* Plan Selection */}
+        <div className="w-36 shrink-0">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.12em] text-kmvmt-navy/40">
+            {ONBOARDING_COPY.COL_PLAN_SELECTION}
+          </p>
+          <p className="text-sm font-bold capitalize text-kmvmt-navy">{application.plan}</p>
+          <p className="text-[11px] capitalize text-kmvmt-navy/50">
+            {application.businessType.replace(/_/g, ' ')}
+          </p>
+        </div>
 
-          {/* Actions — only for pending */}
-          {isPending_ && (
-            <div className="space-y-3 pt-1">
-              <div className="space-y-1.5">
-                <Label htmlFor={`notes-${application.id}`} className="text-xs">
-                  {ONBOARDING_COPY.CARD_NOTES_LABEL}
-                </Label>
-                <Textarea
-                  id={`notes-${application.id}`}
-                  placeholder={ONBOARDING_COPY.CARD_NOTES_PLACEHOLDER}
-                  rows={2}
-                  className="text-xs resize-none"
-                  value={notes}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    setNotes(e.target.value)
-                  }}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                  disabled={isPending}
-                  onClick={() => {
-                    setConfirmAction('approved')
-                  }}
-                >
-                  {isPending ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <>
-                      <Check className="h-3.5 w-3.5 mr-1.5" />
-                      {ONBOARDING_COPY.BTN_APPROVE}
-                    </>
-                  )}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  className="flex-1"
-                  disabled={isPending}
-                  onClick={() => {
-                    setConfirmAction('rejected')
-                  }}
-                >
-                  <X className="h-3.5 w-3.5 mr-1.5" />
-                  {ONBOARDING_COPY.BTN_REJECT}
-                </Button>
-              </div>
-            </div>
+        {/* Owner */}
+        <div className="w-44 shrink-0">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.12em] text-kmvmt-navy/40">
+            {ONBOARDING_COPY.COL_OWNER}
+          </p>
+          <p className="text-sm font-bold text-kmvmt-navy">{application.ownerName}</p>
+          <p className="text-[11px] text-kmvmt-navy/50">{application.ownerEmail}</p>
+        </div>
+
+        {/* Review Notes */}
+        <div className="min-w-0 flex-1">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.12em] text-kmvmt-navy/40">
+            {ONBOARDING_COPY.COL_REVIEW_NOTES}
+          </p>
+          <p className="line-clamp-3 text-xs italic text-kmvmt-navy/60">
+            {application.notes ?? ONBOARDING_COPY.NO_NOTES}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex shrink-0 items-center gap-2">
+          {isPendingStatus && (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-kmvmt-red-dark text-kmvmt-red-dark hover:bg-red-50"
+                disabled={isPending}
+                onClick={() => {
+                  setConfirmAction('rejected')
+                }}
+              >
+                {ONBOARDING_COPY.BTN_REJECT}
+              </Button>
+              <Button
+                size="sm"
+                className="bg-kmvmt-navy text-white hover:bg-kmvmt-blue-light/80"
+                disabled={isPending}
+                onClick={() => {
+                  setConfirmAction('approved')
+                }}
+              >
+                {isPending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  ONBOARDING_COPY.BTN_APPROVE
+                )}
+              </Button>
+            </>
           )}
-        </CardContent>
-      </Card>
+          {isRejected && (
+            <>
+              <Button
+                size="sm"
+                className="bg-kmvmt-red-dark text-white hover:bg-kmvmt-red-light"
+                disabled={isPending}
+                onClick={() => {
+                  setConfirmAction('rejected')
+                }}
+              >
+                {ONBOARDING_COPY.BTN_DECLINE}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-zinc-300 text-kmvmt-navy hover:bg-kmvmt-bg"
+              >
+                {ONBOARDING_COPY.BTN_REQUEST_INFO}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
 
       <ConfirmDialog
         open={confirmAction !== null}

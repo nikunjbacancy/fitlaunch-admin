@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
 import { getErrorMessage } from '@/lib/errors'
 
 interface ExportCsvButtonProps {
@@ -34,19 +33,19 @@ export function ExportCsvButton({ onExport, filename, disabled }: ExportCsvButto
   }
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
+    <button
+      type="button"
       onClick={handleExport}
       disabled={disabled ?? isExporting}
       aria-label="Export as CSV"
+      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-kmvmt-white px-4 py-2.5 text-xs font-bold text-kmvmt-navy transition-colors hover:bg-kmvmt-bg disabled:cursor-not-allowed disabled:opacity-60"
     >
       {isExporting ? (
-        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
       ) : (
-        <Download className="h-4 w-4 mr-2" />
+        <Download className="h-3.5 w-3.5" />
       )}
       Export CSV
-    </Button>
+    </button>
   )
 }

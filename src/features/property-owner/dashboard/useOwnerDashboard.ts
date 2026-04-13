@@ -16,3 +16,19 @@ export function useOwnerLocationStats() {
     staleTime: 60_000,
   })
 }
+
+export function useOwnerMrrTrend() {
+  return useQuery({
+    queryKey: ['owner-mrr-trend'],
+    queryFn: () => ownerDashboardService.getMrrTrend(),
+    staleTime: 60_000,
+  })
+}
+
+export function useOwnerBillingSnapshot() {
+  return useQuery({
+    queryKey: ['owner-billing-snapshot'],
+    queryFn: () => ownerDashboardService.getBillingSnapshot(),
+    staleTime: 60_000,
+  })
+}

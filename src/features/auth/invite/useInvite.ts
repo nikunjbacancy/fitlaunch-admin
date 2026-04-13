@@ -39,10 +39,12 @@ export function useAcceptInvite() {
         email: data.user.email,
         fullName: data.user.full_name,
         role: data.user.role,
-        tenantId: data.user.tenant_id,
+        // Prefer the tenant object as the canonical id — user.tenant_id may be
+        // absent or stale in newer API responses.
+        tenantId: data.tenant?.id ?? data.user.tenant_id,
         tenantName: data.tenant?.name ?? null,
         tenantType: 'apartment',
-        ownerGroupId: data.user.owner_group_id ?? null,
+        ownerGroupId: data.tenant?.owner_group_id ?? data.user.owner_group_id ?? null,
         isTwoFactorVerified: true,
       }
 

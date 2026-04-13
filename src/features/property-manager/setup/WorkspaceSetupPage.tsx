@@ -25,23 +25,20 @@ export function WorkspaceSetupPage() {
 
       {/* Right panel */}
       <div className="flex-1 overflow-y-auto bg-kmvmt-bg">
-        <div className="flex min-h-full items-center justify-center px-10 py-12">
-          <div className="w-full max-w-2xl">
-            {/* Mobile-only: step indicator */}
+        <div className="flex min-h-full justify-center px-6 py-12 sm:px-10">
+          <div className="w-full max-w-4xl">
+            {/* Mobile-only: step indicator pill */}
             <div className="mb-6 flex items-center gap-2 lg:hidden">
-              <span className="text-xs font-medium text-zinc-400">
+              <span className="inline-flex items-center rounded-full bg-kmvmt-white px-3 py-1 text-[10px] font-black uppercase tracking-wider text-kmvmt-navy/60 shadow-[0px_4px_12px_rgba(25,38,64,0.04)]">
                 {SETUP_COPY.MOBILE_STEP_OF.replace('{current}', String(activeStep)).replace(
                   '{total}',
                   String(WIZARD_STEPS.length)
                 )}
               </span>
               {currentWizardStep && (
-                <>
-                  <span className="text-xs text-zinc-300">&middot;</span>
-                  <span className="text-xs font-semibold text-kmvmt-navy">
-                    {currentWizardStep.label}
-                  </span>
-                </>
+                <span className="text-xs font-bold uppercase tracking-wider text-kmvmt-navy">
+                  {currentWizardStep.label}
+                </span>
               )}
             </div>
 

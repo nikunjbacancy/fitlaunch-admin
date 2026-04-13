@@ -14,16 +14,8 @@ import {
   Users,
   UtensilsCrossed,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { useAuthStore } from '@/store/auth.store'
 import { useUpdateBranding } from './useSetup'
 import { brandingSchema, type TBrandingPayload } from './setup.types'
@@ -33,6 +25,11 @@ import { cn } from '@/lib/utils'
 import type { z } from 'zod'
 
 type FormValues = z.infer<typeof brandingSchema>
+
+const FIELD_CLASS =
+  'h-12 rounded-xl border-0 bg-kmvmt-bg text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/30 focus-visible:bg-kmvmt-white focus-visible:ring-1 focus-visible:ring-kmvmt-navy/20 transition-all'
+
+const LABEL_CLASS = 'mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy'
 
 interface BrandingStepProps {
   onComplete: (brandName: string) => void
@@ -53,14 +50,14 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
     resolver: zodResolver(brandingSchema),
     defaultValues: {
       app_display_name: '',
-      primary_color: '#6366f1',
-      secondary_color: '#a5b4fc',
+      primary_color: '#192640',
+      secondary_color: '#7ca3d1',
     },
   })
 
   const watchedValues = form.watch()
 
-  const handleLogoChange = (file: File) => {
+  const handleLogoChange = (file: File): void => {
     setLogoError(null)
     if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
       setLogoError('Only PNG, JPG, and WebP images are accepted.')
@@ -84,7 +81,7 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
     img.src = url
   }
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
     setIsDragging(false)
     if (e.dataTransfer.files.length > 0) {
@@ -92,7 +89,7 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
     }
   }
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = (values: FormValues): void => {
     const payload: TBrandingPayload = {
       app_display_name: values.app_display_name,
       primary_color: values.primary_color,
@@ -114,35 +111,43 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
   }
 
   return (
-    <div className="flex items-start gap-10">
-      {/* Form */}
-      <div className="min-w-0 flex-1">
-        <h2 className="mb-1 text-2xl font-bold text-kmvmt-navy">{SETUP_COPY.BRANDING_HEADING}</h2>
-        <p className="mb-6 text-sm text-zinc-500">{SETUP_COPY.BRANDING_SUBTITLE}</p>
+    <div className="grid gap-8 xl:grid-cols-[1fr_240px]">
+      {/* Form card */}
+      <div className="relative overflow-hidden rounded-3xl bg-kmvmt-white p-10 shadow-[0px_20px_60px_rgba(25,38,64,0.08)]">
+        {/* Gradient glow — top-right */}
+        <div className="pointer-events-none absolute right-0 top-0 h-36 w-36 rounded-bl-full bg-gradient-to-br from-kmvmt-navy to-kmvmt-blue-light opacity-[0.05]" />
+
+        {/* Heading */}
+        <div className="relative">
+          <h2 className="text-3xl font-extrabold tracking-tight text-kmvmt-navy">
+            {SETUP_COPY.BRANDING_HEADING}
+          </h2>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-kmvmt-navy/50">
+            {SETUP_COPY.BRANDING_SUBTITLE}
+          </p>
+        </div>
 
         <Form {...form}>
           <form
             onSubmit={(e) => {
               void form.handleSubmit(handleSubmit)(e)
             }}
-            className="space-y-5"
+            className="relative mt-8 space-y-6"
           >
+            {/* App name */}
             <FormField
               control={form.control}
               name="app_display_name"
               render={({ field }) => (
-                <FormItem className="space-y-1.5">
-                  <FormLabel
-                    htmlFor="app_display_name"
-                    className="text-xs font-medium text-zinc-700"
-                  >
+                <FormItem>
+                  <label htmlFor="app_display_name" className={LABEL_CLASS}>
                     {SETUP_COPY.BRANDING_APP_NAME_LABEL}
-                  </FormLabel>
+                  </label>
                   <FormControl>
                     <Input
                       id="app_display_name"
                       placeholder={SETUP_COPY.BRANDING_APP_NAME_PLACEHOLDER}
-                      className="h-11 border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
+                      className={FIELD_CLASS}
                       {...field}
                     />
                   </FormControl>
@@ -151,21 +156,28 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
               )}
             />
 
+            {/* Divider */}
+            <div className="flex items-center gap-4 pt-2">
+              <span className="h-px flex-1 bg-kmvmt-bg" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-kmvmt-navy/30">
+                Visual Identity
+              </span>
+              <span className="h-px flex-1 bg-kmvmt-bg" />
+            </div>
+
+            {/* Color pickers */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="primary_color"
                 render={({ field }) => (
-                  <FormItem className="space-y-1.5">
-                    <FormLabel
-                      htmlFor="primary_color"
-                      className="text-xs font-medium text-zinc-700"
-                    >
+                  <FormItem>
+                    <label htmlFor="primary_color" className={LABEL_CLASS}>
                       {SETUP_COPY.BRANDING_PRIMARY_COLOR_LABEL}
-                    </FormLabel>
+                    </label>
                     <FormControl>
                       <div
-                        className="relative cursor-pointer overflow-hidden rounded-xl border border-zinc-200 bg-kmvmt-white"
+                        className="relative cursor-pointer overflow-hidden rounded-xl bg-kmvmt-bg ring-1 ring-transparent transition-all hover:ring-kmvmt-navy/20"
                         onClick={() => {
                           primaryColorInputRef.current?.click()
                         }}
@@ -181,14 +193,11 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
                           className="h-20 w-full transition-colors"
                           style={{ backgroundColor: field.value }}
                         />
-                        <div className="px-3 py-2">
-                          <p className="text-xs text-zinc-400">
-                            {SETUP_COPY.BRANDING_PRIMARY_COLOR_LABEL}
-                          </p>
+                        <div className="bg-kmvmt-white px-4 py-2.5">
                           <input
                             id="primary_color"
                             type="text"
-                            className="w-full border-none bg-transparent text-sm font-mono font-semibold text-kmvmt-navy outline-none"
+                            className="w-full border-none bg-transparent font-mono text-sm font-semibold text-kmvmt-navy outline-none"
                             value={field.value}
                             onChange={(e) => {
                               field.onChange(e.target.value)
@@ -219,16 +228,13 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
                 control={form.control}
                 name="secondary_color"
                 render={({ field }) => (
-                  <FormItem className="space-y-1.5">
-                    <FormLabel
-                      htmlFor="secondary_color"
-                      className="text-xs font-medium text-zinc-700"
-                    >
+                  <FormItem>
+                    <label htmlFor="secondary_color" className={LABEL_CLASS}>
                       {SETUP_COPY.BRANDING_SECONDARY_COLOR_LABEL}
-                    </FormLabel>
+                    </label>
                     <FormControl>
                       <div
-                        className="relative cursor-pointer overflow-hidden rounded-xl border border-zinc-200 bg-kmvmt-white"
+                        className="relative cursor-pointer overflow-hidden rounded-xl bg-kmvmt-bg ring-1 ring-transparent transition-all hover:ring-kmvmt-navy/20"
                         onClick={() => {
                           secondaryColorInputRef.current?.click()
                         }}
@@ -244,14 +250,11 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
                           className="h-20 w-full transition-colors"
                           style={{ backgroundColor: field.value }}
                         />
-                        <div className="px-3 py-2">
-                          <p className="text-xs text-zinc-400">
-                            {SETUP_COPY.BRANDING_SECONDARY_COLOR_LABEL}
-                          </p>
+                        <div className="bg-kmvmt-white px-4 py-2.5">
                           <input
                             id="secondary_color"
                             type="text"
-                            className="w-full border-none bg-transparent text-sm font-mono font-semibold text-kmvmt-navy outline-none"
+                            className="w-full border-none bg-transparent font-mono text-sm font-semibold text-kmvmt-navy outline-none"
                             value={field.value}
                             onChange={(e) => {
                               field.onChange(e.target.value)
@@ -280,8 +283,8 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
             </div>
 
             {/* Logo upload */}
-            <div className="space-y-1.5">
-              <p className="text-xs font-medium text-zinc-700">{SETUP_COPY.BRANDING_LOGO_LABEL}</p>
+            <div>
+              <label className={LABEL_CLASS}>{SETUP_COPY.BRANDING_LOGO_LABEL}</label>
               <div
                 role="button"
                 tabIndex={0}
@@ -300,10 +303,10 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
                   if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click()
                 }}
                 className={cn(
-                  'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 transition-colors',
+                  'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl bg-kmvmt-bg py-8 ring-1 transition-all',
                   isDragging
-                    ? 'border-kmvmt-navy bg-kmvmt-navy/5'
-                    : 'border-zinc-300 hover:border-kmvmt-navy/40 bg-kmvmt-bg'
+                    ? 'ring-2 ring-kmvmt-navy'
+                    : 'ring-transparent hover:ring-kmvmt-navy/20'
                 )}
                 aria-label="Upload logo"
               >
@@ -315,10 +318,14 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
                   />
                 ) : (
                   <>
-                    <UploadCloud className="h-7 w-7 text-zinc-400" />
-                    <p className="text-sm text-zinc-500">{SETUP_COPY.BRANDING_LOGO_DROP}</p>
-                    <p className="text-xs text-zinc-400">{SETUP_COPY.BRANDING_LOGO_HINT}</p>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-kmvmt-navy/[0.08] px-2 py-0.5 text-[11px] font-medium text-kmvmt-navy">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-kmvmt-white text-kmvmt-navy/50">
+                      <UploadCloud className="h-5 w-5" />
+                    </div>
+                    <p className="text-sm font-semibold text-kmvmt-navy">
+                      {SETUP_COPY.BRANDING_LOGO_DROP}
+                    </p>
+                    <p className="text-xs text-kmvmt-navy/40">{SETUP_COPY.BRANDING_LOGO_HINT}</p>
+                    <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-kmvmt-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-kmvmt-navy">
                       <Crop className="h-3 w-3" />
                       {SETUP_COPY.BRANDING_SQUARE_BADGE}
                     </span>
@@ -335,22 +342,30 @@ export function BrandingStep({ onComplete }: BrandingStepProps) {
                   if (file) handleLogoChange(file)
                 }}
               />
-              {logoError && <p className="text-xs text-red-600">{logoError}</p>}
+              {logoError && (
+                <p className="mt-2 text-xs font-medium text-kmvmt-red-dark">{logoError}</p>
+              )}
             </div>
 
-            <Button
-              type="submit"
-              className="h-11 w-full bg-kmvmt-navy text-white hover:bg-kmvmt-blue-light/80 font-semibold shadow-sm transition-all"
-              disabled={updateBranding.isPending}
-            >
-              {updateBranding.isPending ? SETUP_COPY.BRANDING_SAVING : SETUP_COPY.BRANDING_SUBMIT}
-            </Button>
+            {/* Footer CTA */}
+            <div className="flex items-center justify-end pt-4">
+              <button
+                type="submit"
+                disabled={updateBranding.isPending}
+                className="rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-8 py-3.5 text-sm font-extrabold text-white shadow-[0_8px_20px_-4px_rgba(25,38,64,0.3)] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
+              >
+                {updateBranding.isPending ? SETUP_COPY.BRANDING_SAVING : SETUP_COPY.BRANDING_SUBMIT}
+              </button>
+            </div>
           </form>
         </Form>
       </div>
 
-      {/* Phone mockup — inline on the right */}
-      <div className="hidden xl:block shrink-0 pt-8">
+      {/* Phone mockup column */}
+      <div className="hidden xl:flex xl:flex-col xl:items-center xl:pt-2">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-kmvmt-navy/40">
+          {SETUP_COPY.PREVIEW_TITLE}
+        </p>
         <PhoneMockup
           primaryColor={watchedValues.primary_color}
           secondaryColor={watchedValues.secondary_color}
@@ -371,14 +386,19 @@ interface PhoneMockupProps {
   logoPreview: string | null
 }
 
-function PhoneMockup({ primaryColor, secondaryColor, appName, logoPreview }: PhoneMockupProps) {
+function PhoneMockup({
+  primaryColor,
+  secondaryColor,
+  appName,
+  logoPreview,
+}: PhoneMockupProps): React.ReactElement {
   return (
     <div
       className="relative flex flex-col overflow-hidden rounded-[36px] border-[6px] border-zinc-800 bg-zinc-900 shadow-2xl"
       style={{ width: 200, height: 424 }}
     >
       {/* Dynamic island */}
-      <div className="absolute top-[10px] left-1/2 z-20 h-[10px] w-[56px] -translate-x-1/2 rounded-full bg-zinc-900" />
+      <div className="absolute left-1/2 top-[10px] z-20 h-[10px] w-[56px] -translate-x-1/2 rounded-full bg-zinc-900" />
 
       {/* Status bar */}
       <div

@@ -86,18 +86,25 @@ export interface OwnerDashboardMetrics {
   activeLocations: number
   membersActiveThisWeek: number
   challengesRunning: number
+  overallOccupancyRate: number
+  pendingRegistrationsCount: number
+  mrrTrend: number
+  memberTrend: number
 }
 
 export interface OwnerLocationStats {
   locationId: string
   locationName: string
   unitCount: number
+  occupiedUnits: number
   memberCount: number
   activeThisWeek: number
   occupancyRate: number
   mrr: number
+  status: 'active' | 'suspended' | 'payment_failed'
   challengesRunning: number
   recentRegistrations: number
+  pendingRegistrations: number
 }
 
 export interface OwnerLocationComparison {

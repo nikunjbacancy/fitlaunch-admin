@@ -22,7 +22,6 @@ interface TenantFiltersProps {
 export function TenantFilters({ filters, onChange, hideTenantType = false }: TenantFiltersProps) {
   const [searchInput, setSearchInput] = useState(filters.search)
 
-  // Debounce search → reset to page 1 on new search
   useEffect(() => {
     const id = setTimeout(() => {
       onChange({ search: searchInput, page: 1 })
@@ -33,16 +32,16 @@ export function TenantFilters({ filters, onChange, hideTenantType = false }: Ten
   }, [searchInput]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-kmvmt-navy/40" />
         <Input
           placeholder={TENANT_COPY.SEARCH_PLACEHOLDER}
           value={searchInput}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setSearchInput(e.target.value)
           }}
-          className="pl-9"
+          className="h-9 border-zinc-200 bg-kmvmt-white pl-9 text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
         />
       </div>
 
@@ -52,7 +51,7 @@ export function TenantFilters({ filters, onChange, hideTenantType = false }: Ten
           onChange({ status: val === 'all' ? '' : (val as TenantFilters['status']), page: 1 })
         }}
       >
-        <SelectTrigger className="w-full sm:w-40">
+        <SelectTrigger className="h-9 w-full border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy sm:w-40">
           <SelectValue placeholder={TENANT_COPY.FILTER_ALL_STATUSES} />
         </SelectTrigger>
         <SelectContent>
@@ -77,7 +76,7 @@ export function TenantFilters({ filters, onChange, hideTenantType = false }: Ten
             })
           }}
         >
-          <SelectTrigger className="w-full sm:w-36">
+          <SelectTrigger className="h-9 w-full border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy sm:w-36">
             <SelectValue placeholder={TENANT_COPY.FILTER_ALL_TYPES} />
           </SelectTrigger>
           <SelectContent>

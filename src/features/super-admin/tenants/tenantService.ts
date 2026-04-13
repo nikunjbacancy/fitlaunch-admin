@@ -1,8 +1,8 @@
 import { apiClient } from '@/lib/axios'
 import { API_ENDPOINTS } from '@/lib/endpoints'
-
-import type { PaginatedResponse, ApiResponse } from '@/types/api.types'
-import type { Tenant } from '@/types/tenant.types'
+// TODO: Owner Groups endpoints aren't in the API yet — these methods still use mocks.
+import { MOCK_OWNER_GROUPS } from '../analytics/dashboard.mock'
+import type { PaginatedResponse } from '@/types/api.types'
 import type {
   TenantFilters,
   TenantListItem,
@@ -13,43 +13,38 @@ import type {
   TAssignLocationPayload,
   OwnerGroupListItem,
 } from './tenant.types'
+import type { Tenant } from '@/types/tenant.types'
 
 export const tenantService = {
   async getAll(filters: TenantFilters): Promise<PaginatedResponse<TenantListItem>> {
-    const params: Record<string, string | number> = {
-      page: filters.page,
-      limit: filters.limit,
-    }
-    if (filters.search) params.search = filters.search
-    if (filters.status) params.status = filters.status
-    if (filters.tenantType) params.tenantType = filters.tenantType
-
     const response = await apiClient.get<PaginatedResponse<TenantListItem>>(
       API_ENDPOINTS.TENANTS.LIST,
-      { params }
+      { params: filters }
     )
     return response.data
   },
 
   async getById(id: string): Promise<Tenant> {
-    const response = await apiClient.get<ApiResponse<Tenant>>(API_ENDPOINTS.TENANTS.DETAIL(id))
+    const response = await apiClient.get<{ success: boolean; data: Tenant }>(
+      API_ENDPOINTS.TENANTS.DETAIL(id)
+    )
     return response.data.data
   },
 
   async approve(id: string): Promise<void> {
-    await apiClient.patch(API_ENDPOINTS.TENANTS.APPROVE(id))
+    await apiClient.post(API_ENDPOINTS.TENANTS.APPROVE(id))
   },
 
   async suspend(id: string, payload: SuspendTenantPayload): Promise<void> {
-    await apiClient.patch(API_ENDPOINTS.TENANTS.SUSPEND(id), payload)
+    await apiClient.post(API_ENDPOINTS.TENANTS.SUSPEND(id), payload)
   },
 
   async reactivate(id: string): Promise<void> {
-    await apiClient.patch(API_ENDPOINTS.TENANTS.REACTIVATE(id))
+    await apiClient.post(API_ENDPOINTS.TENANTS.REACTIVATE(id))
   },
 
   async createApartmentComplex(payload: TCreateComplexPayload): Promise<TenantListItem> {
-    const response = await apiClient.post<ApiResponse<TenantListItem>>(
+    const response = await apiClient.post<{ success: boolean; data: TenantListItem }>(
       API_ENDPOINTS.TENANTS.CREATE_APARTMENT,
       payload
     )
@@ -57,7 +52,7 @@ export const tenantService = {
   },
 
   async updateComplex(id: string, payload: TUpdateComplexPayload): Promise<TenantListItem> {
-    const response = await apiClient.patch<ApiResponse<TenantListItem>>(
+    const response = await apiClient.patch<{ success: boolean; data: TenantListItem }>(
       API_ENDPOINTS.TENANTS.UPDATE(id),
       payload
     )
@@ -69,29 +64,23 @@ export const tenantService = {
   },
 
   // ── Owner Groups ──────────────────────────────────────────────────────────
+  // TODO: Switch to real API when OWNER_GROUPS endpoints are implemented on the backend.
 
   async getOwnerGroups(): Promise<OwnerGroupListItem[]> {
-    const response = await apiClient.get<{ success: boolean; data: OwnerGroupListItem[] }>(
-      API_ENDPOINTS.OWNER_GROUPS.LIST
-    )
-    return response.data.data
+    return Promise.resolve(MOCK_OWNER_GROUPS)
   },
 
   async createOwnerGroup(
-    payload: TCreateOwnerGroupPayload
-  ): Promise<ApiResponse<OwnerGroupListItem>> {
-    const response = await apiClient.post<ApiResponse<OwnerGroupListItem>>(
-      API_ENDPOINTS.OWNER_GROUPS.CREATE,
-      payload
-    )
-    return response.data
+    _payload: TCreateOwnerGroupPayload
+  ): Promise<{ success: boolean; data: OwnerGroupListItem; message: string }> {
+    return Promise.resolve({ success: true, data: MOCK_OWNER_GROUPS[0], message: 'Created' })
   },
 
-  async assignLocationToOwner(groupId: string, payload: TAssignLocationPayload): Promise<void> {
-    await apiClient.post(API_ENDPOINTS.OWNER_GROUPS.ASSIGN_LOCATION(groupId), payload)
+  async assignLocationToOwner(_groupId: string, _payload: TAssignLocationPayload): Promise<void> {
+    return Promise.resolve()
   },
 
-  async removeLocationFromOwner(groupId: string, locationId: string): Promise<void> {
-    await apiClient.delete(API_ENDPOINTS.OWNER_GROUPS.REMOVE_LOCATION(groupId, locationId))
+  async removeLocationFromOwner(_groupId: string, _locationId: string): Promise<void> {
+    return Promise.resolve()
   },
 }

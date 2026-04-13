@@ -27,11 +27,26 @@ export interface ApiUser {
   owner_group_id: string | null
 }
 
+export interface ApiTenantSummary {
+  id: string
+  name: string
+  onboarding_step: string
+  owner_group_id: string | null
+  // Branding fields — present on login + invite-accept responses.
+  // For unbranded tenants: logo_url is null; colors fall back to DB defaults.
+  app_display_name?: string | null
+  primary_color?: string | null
+  secondary_color?: string | null
+  logo_url?: string | null
+}
+
 export interface ApiLoginData {
   access_token: string
   refresh_token: string
   expires_in: number
   user: ApiUser
+  // null for super_admin (no tenant); always present for PM / PO / trainer
+  tenant: ApiTenantSummary | null
 }
 
 export interface ApiLoginResponse {
@@ -63,4 +78,5 @@ export interface TwoFactorPayload {
 export interface LoginResponse {
   user: AuthUser
   accessToken: string
+  tenant: ApiTenantSummary | null
 }

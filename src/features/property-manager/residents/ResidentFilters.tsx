@@ -34,14 +34,14 @@ export function ResidentFilters({ filters, onChange }: ResidentFiltersProps) {
   }, [])
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap items-center gap-3">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-kmvmt-navy/40" />
         <Input
           placeholder={RESIDENT_COPY.SEARCH_PLACEHOLDER}
           defaultValue={filters.search ?? ''}
           onChange={handleSearchChange}
-          className="h-8 w-56 pl-8 text-sm"
+          className="h-10 w-64 border-zinc-200 bg-kmvmt-white pl-9 text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
         />
       </div>
       <Select
@@ -50,7 +50,7 @@ export function ResidentFilters({ filters, onChange }: ResidentFiltersProps) {
           onChange({ ...filters, status: v === 'all' ? undefined : (v as ResidentStatus) })
         }}
       >
-        <SelectTrigger className="h-8 w-36 text-sm">
+        <SelectTrigger className="h-10 w-44 border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy focus:ring-kmvmt-navy">
           <SelectValue placeholder={RESIDENT_COPY.FILTER_ALL_STATUSES} />
         </SelectTrigger>
         <SelectContent>

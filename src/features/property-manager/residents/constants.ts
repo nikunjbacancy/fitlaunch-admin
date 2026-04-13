@@ -20,8 +20,11 @@ export const RESIDENT_COPY = {
   PAGE_TITLE: 'Residents',
   PAGE_DESCRIPTION: 'Manage resident access and approvals for your community',
   ERROR_LOAD: 'Failed to load residents',
-  EMPTY_TITLE: 'No residents found',
-  EMPTY_DESCRIPTION: 'No residents match your current filters.',
+  EMPTY_TITLE: 'No residents yet',
+  EMPTY_DESCRIPTION:
+    'Residents will appear here as they register through the mobile app using your unit codes.',
+  EMPTY_FILTERED_TITLE: 'No residents match your filters',
+  EMPTY_FILTERED_DESCRIPTION: 'Try clearing filters or adjusting your search.',
   SEARCH_PLACEHOLDER: 'Search residents…',
   FILTER_ALL_STATUSES: 'All statuses',
   COL_RESIDENT: 'Resident',

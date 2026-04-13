@@ -44,3 +44,19 @@ export function useApproveAllPending() {
     },
   })
 }
+
+export function useCommunityActivity() {
+  return useQuery({
+    queryKey: ['pm-community-activity'],
+    queryFn: () => pmDashboardService.getCommunityActivity(),
+    staleTime: 30_000,
+  })
+}
+
+export function useActiveChallenges() {
+  return useQuery({
+    queryKey: ['pm-active-challenges'],
+    queryFn: () => pmDashboardService.getActiveChallenges(),
+    staleTime: 60_000,
+  })
+}

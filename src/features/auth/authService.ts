@@ -33,9 +33,18 @@ export const authService = {
   async login(payload: LoginPayload): Promise<LoginResponse> {
     const response = await apiClient.post<ApiLoginResponse>(API_ENDPOINTS.AUTH.LOGIN, payload)
     const { data } = response.data
+    const user = mapApiUser(data.user)
+    // Login now returns tenant as a dedicated object. Prefer it as the
+    // source of truth — `user.tenant_id` may be absent / stale in the new shape.
+    if (data.tenant) {
+      user.tenantId = data.tenant.id
+      user.tenantName = data.tenant.name
+      user.ownerGroupId = data.tenant.owner_group_id
+    }
     return {
-      user: mapApiUser(data.user),
+      user,
       accessToken: data.access_token,
+      tenant: data.tenant,
     }
   },
 

@@ -29,6 +29,10 @@ export interface TInviteAcceptResponse {
     name: string | null
     onboarding_step: string
     owner_group_id: string | null
+    app_display_name?: string | null
+    primary_color?: string | null
+    secondary_color?: string | null
+    logo_url?: string | null
   } | null
 }
 

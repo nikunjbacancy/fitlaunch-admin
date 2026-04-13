@@ -11,6 +11,32 @@
   --color-kmvmt-white: #ffffff;
 }
 
+/* ─── Dashboard Glow Overlays ─────────────────────────────────────── */
+@layer utilities {
+  .glass-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at top right,
+      color-mix(in srgb, #192640 8%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  .burgundy-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at top right,
+      color-mix(in srgb, #9a292c 12%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+}
+
 @layer base {
   :root {
     /* ── Brand-mapped shadcn CSS variables ── */

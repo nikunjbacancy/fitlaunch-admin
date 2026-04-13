@@ -8,7 +8,7 @@ export function AdminLayout(): React.ReactElement {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-kmvmt-bg">
+    <div className="flex h-screen overflow-hidden bg-kmvmt-white">
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <Sidebar />
@@ -40,7 +40,7 @@ export function AdminLayout(): React.ReactElement {
           }}
         />
 
-        <main className={cn('flex-1 overflow-y-auto p-6', 'focus:outline-none')}>
+        <main className={cn('flex-1 overflow-y-auto bg-kmvmt-bg p-8', 'focus:outline-none')}>
           <Outlet />
         </main>
       </div>

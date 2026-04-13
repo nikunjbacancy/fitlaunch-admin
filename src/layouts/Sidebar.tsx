@@ -46,7 +46,7 @@ export function Sidebar(): React.ReactElement {
         {navGroups.map((group, gi) => (
           <div key={gi}>
             {group.title && !collapsed && (
-              <p className="px-3 mb-1 text-xs font-medium text-kmvmt-blue-light/60 uppercase tracking-wider">
+              <p className="px-3 mb-2 text-[10px] font-black text-kmvmt-blue-light/60 uppercase tracking-[0.2em]">
                 {group.title}
               </p>
             )}
@@ -65,10 +65,10 @@ export function Sidebar(): React.ReactElement {
                       to={item.path}
                       title={collapsed ? item.label : undefined}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                        'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all duration-150 active:scale-[0.98]',
                         isActive
-                          ? 'bg-white/15 text-white'
-                          : 'text-white/60 hover:bg-white/10 hover:text-white'
+                          ? 'bg-kmvmt-blue-light/20 text-white font-semibold'
+                          : 'text-kmvmt-blue-light font-medium hover:bg-white/10 hover:text-white'
                       )}
                     >
                       <item.icon className="w-4 h-4 shrink-0" />
@@ -114,7 +114,7 @@ export function Sidebar(): React.ReactElement {
           onClick={logout}
           title={collapsed ? 'Sign out' : undefined}
           className={cn(
-            'flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors',
+            'flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-kmvmt-blue-light hover:bg-white/10 hover:text-white transition-all duration-150 active:scale-[0.98]',
             collapsed && 'justify-center'
           )}
         >

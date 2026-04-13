@@ -1,19 +1,10 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { X, Layers } from 'lucide-react'
 import { toast } from 'sonner'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 import { useQueryClient } from '@tanstack/react-query'
@@ -27,6 +18,9 @@ interface GenerateRangeModalProps {
   onOpenChange: (open: boolean) => void
   remaining: number
 }
+
+const FIELD_CLASS =
+  'h-12 rounded-xl border-0 bg-kmvmt-bg text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/30 focus-visible:bg-kmvmt-white focus-visible:ring-1 focus-visible:ring-kmvmt-navy/20 transition-all'
 
 export function GenerateRangeModal({ open, onOpenChange, remaining }: GenerateRangeModalProps) {
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -89,50 +83,37 @@ export function GenerateRangeModal({ open, onOpenChange, remaining }: GenerateRa
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-md [&>button]:hidden">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-zinc-200 px-6 py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-kmvmt-bg">
-              <Layers className="h-4 w-4 text-kmvmt-navy" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-kmvmt-navy">{UNITS_COPY.GENERATE_TITLE}</h2>
-              <p className="text-xs text-kmvmt-navy/50">{UNITS_COPY.GENERATE_DESCRIPTION}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => {
-              handleOpenChange(false)
-            }}
-            className="mt-0.5 rounded-md p-1 text-kmvmt-navy/40 transition-colors hover:bg-kmvmt-bg hover:text-kmvmt-navy"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+      <DialogContent className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-lg [&>button]:hidden rounded-[2rem] shadow-[0px_20px_60px_rgba(25,38,64,0.12)]">
+        <div className="pointer-events-none absolute right-0 top-0 h-36 w-36 rounded-bl-full bg-gradient-to-br from-kmvmt-navy to-kmvmt-blue-light opacity-[0.05]" />
 
-        {/* Form */}
         <Form {...form}>
           <form
             onSubmit={(e) => {
               void form.handleSubmit(handleSubmit)(e)
             }}
           >
-            <div className="space-y-4 px-6 py-5">
+            <div className="px-10 pb-2 pt-10 text-center">
+              <h2 className="text-3xl font-extrabold tracking-tight text-kmvmt-navy">
+                {UNITS_COPY.GENERATE_TITLE}
+              </h2>
+              <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-kmvmt-navy/50">
+                {UNITS_COPY.GENERATE_DESCRIPTION}
+              </p>
+            </div>
+
+            <div className="space-y-6 px-10 py-8">
               <FormField
                 control={form.control}
                 name="prefix"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-medium text-kmvmt-navy">
+                    <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy">
                       {UNITS_COPY.GENERATE_PREFIX}
-                    </FormLabel>
+                    </label>
                     <FormControl>
                       <Input
                         placeholder={UNITS_COPY.GENERATE_PREFIX_PLACEHOLDER}
-                        className="border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy uppercase placeholder:text-kmvmt-navy/40 placeholder:normal-case focus-visible:ring-kmvmt-navy"
+                        className={`${FIELD_CLASS} uppercase placeholder:normal-case`}
                         {...field}
                         onChange={(e) => {
                           field.onChange(e.target.value.replace(/[^A-Za-z0-9]/g, ''))
@@ -144,21 +125,29 @@ export function GenerateRangeModal({ open, onOpenChange, remaining }: GenerateRa
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center gap-4">
+                <span className="h-px flex-1 bg-kmvmt-bg" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-kmvmt-navy/30">
+                  Range
+                </span>
+                <span className="h-px flex-1 bg-kmvmt-bg" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="from"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-medium text-kmvmt-navy">
+                      <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy">
                         {UNITS_COPY.GENERATE_FROM}
-                      </FormLabel>
+                      </label>
                       <FormControl>
                         <Input
                           type="number"
                           min={1}
                           placeholder={UNITS_COPY.GENERATE_FROM_PLACEHOLDER}
-                          className="border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
+                          className={FIELD_CLASS}
                           {...field}
                           onChange={(e) => {
                             field.onChange(e.target.valueAsNumber)
@@ -175,15 +164,15 @@ export function GenerateRangeModal({ open, onOpenChange, remaining }: GenerateRa
                   name="to"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-medium text-kmvmt-navy">
+                      <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy">
                         {UNITS_COPY.GENERATE_TO}
-                      </FormLabel>
+                      </label>
                       <FormControl>
                         <Input
                           type="number"
                           min={1}
                           placeholder={UNITS_COPY.GENERATE_TO_PLACEHOLDER}
-                          className="border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
+                          className={FIELD_CLASS}
                           {...field}
                           onChange={(e) => {
                             field.onChange(e.target.valueAsNumber)
@@ -196,27 +185,26 @@ export function GenerateRangeModal({ open, onOpenChange, remaining }: GenerateRa
                 />
               </div>
 
-              {/* Preview */}
               {rangeValid && rangeCount > 0 && (
                 <div
                   className={cn(
-                    'flex items-center justify-between rounded-lg border px-4 py-3',
+                    'flex items-center justify-between rounded-xl px-5 py-4',
                     exceedsLimit
-                      ? 'border-kmvmt-red-light bg-kmvmt-red-light/10'
-                      : 'border-kmvmt-navy bg-kmvmt-navy'
+                      ? 'bg-kmvmt-red-dark/8'
+                      : 'bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light'
                   )}
                 >
                   <p
                     className={cn(
-                      'text-xs',
-                      exceedsLimit ? 'text-kmvmt-red-dark' : 'text-white/50'
+                      'text-xs font-medium',
+                      exceedsLimit ? 'text-kmvmt-red-dark' : 'text-white/70'
                     )}
                   >
                     {UNITS_COPY.GENERATE_PREVIEW(prefix, from, to, rangeCount)}
                   </p>
                   <p
                     className={cn(
-                      'text-sm font-semibold',
+                      'text-sm font-extrabold',
                       exceedsLimit ? 'text-kmvmt-red-dark' : 'text-white'
                     )}
                   >
@@ -225,37 +213,37 @@ export function GenerateRangeModal({ open, onOpenChange, remaining }: GenerateRa
                 </div>
               )}
               {exceedsLimit && rangeCount > 0 && (
-                <p className="text-xs text-kmvmt-red-dark">
+                <p className="text-xs italic text-kmvmt-red-dark">
                   {UNITS_COPY.LIMIT_EXCEEDED(rangeCount, remaining)}
                 </p>
               )}
+
+              {submitError && (
+                <div className="rounded-xl bg-kmvmt-red-dark/8 px-4 py-3">
+                  <p className="text-xs text-kmvmt-red-dark">{submitError}</p>
+                </div>
+              )}
             </div>
 
-            {submitError && (
-              <div className="mx-6 mb-4 rounded-md border border-kmvmt-red-light bg-kmvmt-red-light/10 px-3 py-2.5">
-                <p className="text-xs text-kmvmt-red-dark">{submitError}</p>
-              </div>
-            )}
-
-            <div className="flex gap-2.5 border-t border-zinc-200 bg-kmvmt-bg px-6 py-4">
-              <Button
+            <div className="flex items-center justify-end gap-6 px-10 pb-10 pt-2">
+              <button
                 type="button"
-                className="flex-1 border border-zinc-300 bg-kmvmt-white text-sm text-kmvmt-navy hover:bg-kmvmt-bg"
                 onClick={() => {
                   handleOpenChange(false)
                 }}
+                className="px-6 py-3.5 text-sm font-bold text-kmvmt-navy/50 transition-colors hover:text-kmvmt-navy"
               >
                 {UNITS_COPY.BTN_CANCEL}
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
-                className="flex-1 bg-kmvmt-navy text-sm text-white hover:bg-kmvmt-blue-light/80"
                 disabled={isGenerating || rangeCount === 0 || exceedsLimit}
+                className="rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-8 py-3.5 text-sm font-extrabold text-white shadow-[0_8px_20px_-4px_rgba(25,38,64,0.3)] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
               >
                 {isGenerating
                   ? UNITS_COPY.GENERATE_GENERATING
                   : UNITS_COPY.GENERATE_BTN.replace('{n}', String(rangeCount))}
-              </Button>
+              </button>
             </div>
           </form>
         </Form>

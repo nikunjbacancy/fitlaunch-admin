@@ -1,18 +1,9 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { X, Pencil } from 'lucide-react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { getErrorMessage } from '@/lib/errors'
 import { useEditUnit } from './useUnits'
 import { editUnitSchema } from './unit.types'
@@ -25,6 +16,9 @@ interface EditUnitModalProps {
   unit: Unit
   onSuccess: (updated: Unit) => void
 }
+
+const FIELD_CLASS =
+  'h-12 rounded-xl border-0 bg-kmvmt-bg text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/30 focus-visible:bg-kmvmt-white focus-visible:ring-1 focus-visible:ring-kmvmt-navy/20 transition-all'
 
 export function EditUnitModal({ open, onOpenChange, unit, onSuccess }: EditUnitModalProps) {
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -61,28 +55,8 @@ export function EditUnitModal({ open, onOpenChange, unit, onSuccess }: EditUnitM
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-sm [&>button]:hidden">
-        <div className="flex items-start justify-between border-b border-zinc-200 px-6 py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-kmvmt-bg">
-              <Pencil className="h-4 w-4 text-kmvmt-navy" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-kmvmt-navy">{UNITS_COPY.EDIT_TITLE}</h2>
-              <p className="text-xs text-kmvmt-navy/50">{UNITS_COPY.EDIT_DESCRIPTION}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => {
-              handleOpenChange(false)
-            }}
-            className="mt-0.5 rounded-md p-1 text-kmvmt-navy/40 transition-colors hover:bg-kmvmt-bg hover:text-kmvmt-navy"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+      <DialogContent className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-lg [&>button]:hidden rounded-[2rem] shadow-[0px_20px_60px_rgba(25,38,64,0.12)]">
+        <div className="pointer-events-none absolute right-0 top-0 h-36 w-36 rounded-bl-full bg-gradient-to-br from-kmvmt-navy to-kmvmt-blue-light opacity-[0.05]" />
 
         <Form {...form}>
           <form
@@ -90,19 +64,36 @@ export function EditUnitModal({ open, onOpenChange, unit, onSuccess }: EditUnitM
               void form.handleSubmit(handleSubmit)(e)
             }}
           >
-            <div className="px-6 py-5">
+            <div className="px-10 pb-2 pt-10 text-center">
+              <h2 className="text-3xl font-extrabold tracking-tight text-kmvmt-navy">
+                {UNITS_COPY.EDIT_TITLE}
+              </h2>
+              <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-kmvmt-navy/50">
+                {UNITS_COPY.EDIT_DESCRIPTION}
+              </p>
+            </div>
+
+            <div className="space-y-6 px-10 py-8">
+              <div className="flex items-center gap-4">
+                <span className="h-px flex-1 bg-kmvmt-bg" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-kmvmt-navy/30">
+                  Current: {unit.code}
+                </span>
+                <span className="h-px flex-1 bg-kmvmt-bg" />
+              </div>
+
               <FormField
                 control={form.control}
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-medium text-kmvmt-navy">
+                    <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy">
                       {UNITS_COPY.EDIT_FIELD_CODE}
-                    </FormLabel>
+                    </label>
                     <FormControl>
                       <Input
                         placeholder={UNITS_COPY.EDIT_FIELD_CODE_PLACEHOLDER}
-                        className="border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
+                        className={FIELD_CLASS}
                         {...field}
                       />
                     </FormControl>
@@ -110,31 +101,31 @@ export function EditUnitModal({ open, onOpenChange, unit, onSuccess }: EditUnitM
                   </FormItem>
                 )}
               />
+
+              {submitError && (
+                <div className="rounded-xl bg-kmvmt-red-dark/8 px-4 py-3">
+                  <p className="text-xs text-kmvmt-red-dark">{submitError}</p>
+                </div>
+              )}
             </div>
 
-            {submitError && (
-              <div className="mx-6 mb-4 rounded-md border border-kmvmt-red-light bg-kmvmt-red-light/10 px-3 py-2.5">
-                <p className="text-xs text-kmvmt-red-dark">{submitError}</p>
-              </div>
-            )}
-
-            <div className="flex gap-2.5 border-t border-zinc-200 bg-kmvmt-bg px-6 py-4">
-              <Button
+            <div className="flex items-center justify-end gap-6 px-10 pb-10 pt-2">
+              <button
                 type="button"
-                className="flex-1 border border-zinc-300 bg-kmvmt-white text-sm text-kmvmt-navy hover:bg-kmvmt-bg"
                 onClick={() => {
                   handleOpenChange(false)
                 }}
+                className="px-6 py-3.5 text-sm font-bold text-kmvmt-navy/50 transition-colors hover:text-kmvmt-navy"
               >
                 {UNITS_COPY.BTN_CANCEL}
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
-                className="flex-1 bg-kmvmt-navy text-sm text-white hover:bg-kmvmt-blue-light/80"
                 disabled={editUnit.isPending}
+                className="rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-8 py-3.5 text-sm font-extrabold text-white shadow-[0_8px_20px_-4px_rgba(25,38,64,0.3)] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
               >
                 {editUnit.isPending ? 'Saving\u2026' : UNITS_COPY.BTN_SAVE}
-              </Button>
+              </button>
             </div>
           </form>
         </Form>

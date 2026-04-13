@@ -24,39 +24,47 @@ export function FeatureFlagList() {
   }
 
   return (
-    <div className="rounded-lg border bg-card">
-      <Table>
-        <TableHeader>
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-kmvmt-bg/50 hover:bg-kmvmt-bg/50">
+          <TableHead className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-kmvmt-navy">
+            Flag
+          </TableHead>
+          <TableHead className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-kmvmt-navy">
+            Key
+          </TableHead>
+          <TableHead className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-kmvmt-navy">
+            Category
+          </TableHead>
+          <TableHead className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-kmvmt-navy">
+            Last Updated
+          </TableHead>
+          <TableHead className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-kmvmt-navy">
+            Enabled
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      {isLoading ? (
+        <DataTableSkeleton columns={COLUMNS} />
+      ) : !flags?.length ? (
+        <TableBody>
           <TableRow>
-            <TableHead>Flag</TableHead>
-            <TableHead>Key</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Last Updated</TableHead>
-            <TableHead>Enabled</TableHead>
+            <td colSpan={COLUMNS}>
+              <EmptyState
+                title="No feature flags"
+                description="No feature flags have been configured yet."
+                icon={<Flag className="h-8 w-8 text-kmvmt-navy/30" />}
+              />
+            </td>
           </TableRow>
-        </TableHeader>
-        {isLoading ? (
-          <DataTableSkeleton columns={COLUMNS} />
-        ) : !flags?.length ? (
-          <TableBody>
-            <TableRow>
-              <td colSpan={COLUMNS}>
-                <EmptyState
-                  title="No feature flags"
-                  description="No feature flags have been configured yet."
-                  icon={<Flag className="h-8 w-8 text-muted-foreground" />}
-                />
-              </td>
-            </TableRow>
-          </TableBody>
-        ) : (
-          <TableBody>
-            {flags.map((flag) => (
-              <FeatureFlagRow key={flag.id} flag={flag} />
-            ))}
-          </TableBody>
-        )}
-      </Table>
-    </div>
+        </TableBody>
+      ) : (
+        <TableBody>
+          {flags.map((flag) => (
+            <FeatureFlagRow key={flag.id} flag={flag} />
+          ))}
+        </TableBody>
+      )}
+    </Table>
   )
 }

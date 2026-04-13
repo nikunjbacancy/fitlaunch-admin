@@ -22,6 +22,10 @@ export function isForbiddenError(error: unknown): boolean {
   return axios.isAxiosError(error) && error.response?.status === 403
 }
 
+export function isNotFoundError(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 404
+}
+
 export function getErrorCode(error: unknown): string | undefined {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as { error?: string | { code?: string } } | undefined

@@ -13,80 +13,127 @@ import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import type { BadgeStatus } from '@/components/shared/StatusBadge'
 import { MoreHorizontal } from 'lucide-react'
-import { TENANT_TYPE_LABELS, TENANT_COPY } from './constants'
+import { TENANT_TYPE_LABELS, TENANT_COPY, PLAN_BADGE_CLASSES, PLAN_LABELS } from './constants'
 import { EditComplexModal } from './EditComplexModal'
 import { AssignOwnerGroupModal } from './AssignOwnerGroupModal'
 import { useResendInvite } from './useTenantActions'
-import type { TenantListItem } from './tenant.types'
+import type { TenantListItem, SubscriptionPlan } from './tenant.types'
+
+type ViewMode = 'apartment' | 'trainer' | 'all'
 
 interface TenantTableRowProps {
   tenant: TenantListItem
+  viewMode: ViewMode
 }
 
-export function TenantTableRow({ tenant }: TenantTableRowProps) {
+export function TenantTableRow({ tenant, viewMode }: TenantTableRowProps) {
   const [editOpen, setEditOpen] = useState(false)
   const [assignOwnerOpen, setAssignOwnerOpen] = useState(false)
   const resendInvite = useResendInvite()
 
   const isApartment = tenant.tenant_type === 'apartment'
   const primaryUser = tenant.admin_users.at(0)
-  const userStatus = primaryUser?.status
-  const canResendInvite = isApartment && userStatus === 'invited'
+  const canResendInvite = isApartment && primaryUser?.status === 'invited'
   const createdDate = tenant.created_at ? new Date(tenant.created_at).toLocaleDateString() : '—'
 
-  const initials = (tenant.app_display_name ?? primaryUser?.full_name ?? '?')
+  // Derive initials from display name or PM name
+  const displayName = tenant.app_display_name ?? primaryUser?.full_name ?? '?'
+  const initials = displayName
     .split(' ')
     .slice(0, 2)
     .map((w) => w[0])
     .join('')
     .toUpperCase()
 
+  // Status: subscription_status takes priority, fall back to user status
+  const status = (tenant.subscription_status ?? primaryUser?.status ?? null) as BadgeStatus | null
+
+  // Plan
+  const plan = tenant.subscription_plan as SubscriptionPlan | null
+  const planClass = plan ? PLAN_BADGE_CLASSES[plan] || '' : ''
+  const planLabel = plan ? PLAN_LABELS[plan] || plan : '—'
+
   return (
     <>
-      <TableRow>
-        {/* Tenant — logo + name + email */}
+      <TableRow className="hover:bg-kmvmt-bg/50">
+        {/* Tenant */}
         <TableCell>
           <div className="flex items-center gap-3">
             {tenant.logo_url ? (
               <img
                 src={tenant.logo_url}
-                alt={tenant.app_display_name ?? ''}
-                className="h-8 w-8 rounded-md border border-zinc-200 object-cover"
+                alt={displayName}
+                className="h-9 w-9 rounded-lg border border-zinc-200 object-cover"
               />
             ) : (
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 bg-zinc-100 text-xs font-semibold text-zinc-600">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-kmvmt-navy text-xs font-bold text-white">
                 {initials}
               </div>
             )}
             <div>
-              <p className="font-medium text-zinc-900">{tenant.app_display_name ?? '—'}</p>
-              {primaryUser?.email && <p className="text-xs text-zinc-500">{primaryUser.email}</p>}
+              <p className="text-sm font-medium text-kmvmt-navy">{displayName}</p>
+              {primaryUser?.email && (
+                <p className="text-xs text-kmvmt-navy/50">{primaryUser.email}</p>
+              )}
             </div>
           </div>
         </TableCell>
 
-        {/* Type */}
+        {/* Type (all mode only) */}
+        {viewMode === 'all' && (
+          <TableCell>
+            {tenant.tenant_type ? (
+              <Badge variant="outline" className="border-zinc-200 text-xs text-kmvmt-navy/70">
+                {TENANT_TYPE_LABELS[tenant.tenant_type]}
+              </Badge>
+            ) : (
+              <span className="text-xs text-kmvmt-navy/30">—</span>
+            )}
+          </TableCell>
+        )}
+
+        {/* Plan */}
         <TableCell>
-          {tenant.tenant_type ? (
-            <Badge variant="outline" className="text-xs">
-              {TENANT_TYPE_LABELS[tenant.tenant_type]}
+          {plan ? (
+            <Badge variant="outline" className={`text-xs ${planClass}`}>
+              {planLabel}
             </Badge>
           ) : (
-            <span className="text-xs text-zinc-400">—</span>
+            <span className="text-xs text-kmvmt-navy/30">—</span>
           )}
         </TableCell>
 
-        {/* Status — from admin_users[0].status */}
+        {/* Status */}
         <TableCell>
-          {userStatus ? (
-            <StatusBadge status={userStatus as BadgeStatus} />
+          {status ? (
+            <StatusBadge status={status} />
           ) : (
-            <span className="text-xs text-zinc-400">—</span>
+            <span className="text-xs text-kmvmt-navy/30">—</span>
           )}
         </TableCell>
+
+        {/* Units / Price (apartment mode only) */}
+        {viewMode === 'apartment' && (
+          <TableCell>
+            {tenant.unit_count != null ? (
+              <div>
+                <p className="text-sm font-medium text-kmvmt-navy">
+                  {tenant.unit_count.toLocaleString()} units
+                </p>
+                {tenant.price_per_unit != null && (
+                  <p className="text-xs text-kmvmt-navy/50">
+                    ${tenant.price_per_unit.toFixed(2)} / unit
+                  </p>
+                )}
+              </div>
+            ) : (
+              <span className="text-xs text-kmvmt-navy/30">—</span>
+            )}
+          </TableCell>
+        )}
 
         {/* Created */}
-        <TableCell className="text-right text-xs text-zinc-500">{createdDate}</TableCell>
+        <TableCell className="text-right text-xs text-kmvmt-navy/50">{createdDate}</TableCell>
 
         {/* Actions */}
         <TableCell>
@@ -95,7 +142,8 @@ export function TenantTableRow({ tenant }: TenantTableRowProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                aria-label={`Actions for ${tenant.app_display_name ?? 'tenant'}`}
+                className="h-8 w-8 p-0 text-kmvmt-navy/40 hover:text-kmvmt-navy"
+                aria-label={`Actions for ${displayName}`}
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -116,16 +164,14 @@ export function TenantTableRow({ tenant }: TenantTableRowProps) {
                   >
                     {TENANT_COPY.EDIT_COMPLEX_LABEL}
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      setAssignOwnerOpen(true)
+                    }}
+                  >
+                    {TENANT_COPY.ASSIGN_LOCATION}
+                  </DropdownMenuItem>
                 </>
-              )}
-              {isApartment && (
-                <DropdownMenuItem
-                  onSelect={() => {
-                    setAssignOwnerOpen(true)
-                  }}
-                >
-                  {TENANT_COPY.ASSIGN_LOCATION}
-                </DropdownMenuItem>
               )}
               {canResendInvite && (
                 <DropdownMenuItem

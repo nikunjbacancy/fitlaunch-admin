@@ -1,18 +1,10 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { X, Home, Ban } from 'lucide-react'
+import { Ban } from 'lucide-react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { getErrorMessage } from '@/lib/errors'
 import { useAddUnit } from './useUnits'
 import { addUnitSchema, buildUnitCode } from './unit.types'
@@ -24,6 +16,9 @@ interface AddUnitModalProps {
   onOpenChange: (open: boolean) => void
   limitReached?: boolean
 }
+
+const FIELD_CLASS =
+  'h-12 rounded-xl border-0 bg-kmvmt-bg text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/30 focus-visible:bg-kmvmt-white focus-visible:ring-1 focus-visible:ring-kmvmt-navy/20 transition-all'
 
 export function AddUnitModal({ open, onOpenChange, limitReached = false }: AddUnitModalProps) {
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -65,37 +60,34 @@ export function AddUnitModal({ open, onOpenChange, limitReached = false }: AddUn
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-md [&>button]:hidden">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-zinc-200 px-6 py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-kmvmt-bg">
-              <Home className="h-4 w-4 text-kmvmt-navy" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-kmvmt-navy">{UNITS_COPY.MODAL_TITLE}</h2>
-              <p className="text-xs text-kmvmt-navy/50">{UNITS_COPY.MODAL_DESCRIPTION}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => {
-              handleOpenChange(false)
-            }}
-            className="mt-0.5 rounded-md p-1 text-kmvmt-navy/40 transition-colors hover:bg-kmvmt-bg hover:text-kmvmt-navy"
-          >
-            <X className="h-4 w-4" />
-          </button>
+      <DialogContent className="gap-0 overflow-hidden bg-kmvmt-white p-0 text-kmvmt-navy sm:max-w-lg [&>button]:hidden rounded-[2rem] shadow-[0px_20px_60px_rgba(25,38,64,0.12)]">
+        <div className="pointer-events-none absolute right-0 top-0 h-36 w-36 rounded-bl-full bg-gradient-to-br from-kmvmt-navy to-kmvmt-blue-light opacity-[0.05]" />
+
+        <div className="px-10 pb-2 pt-10 text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight text-kmvmt-navy">
+            {UNITS_COPY.MODAL_TITLE}
+          </h2>
+          <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-kmvmt-navy/50">
+            {UNITS_COPY.MODAL_DESCRIPTION}
+          </p>
         </div>
 
         {limitReached ? (
-          <div className="px-6 py-8 text-center">
+          <div className="px-10 pb-10 pt-6 text-center">
             <Ban className="mx-auto mb-3 h-10 w-10 text-kmvmt-red-dark" />
-            <h3 className="text-sm font-semibold text-kmvmt-navy">
-              {UNITS_COPY.LIMIT_REACHED_TITLE}
-            </h3>
-            <p className="mt-1 text-xs text-kmvmt-navy/60">{UNITS_COPY.LIMIT_REACHED_DESC}</p>
+            <h3 className="text-sm font-bold text-kmvmt-navy">{UNITS_COPY.LIMIT_REACHED_TITLE}</h3>
+            <p className="mt-2 text-xs text-kmvmt-navy/60">{UNITS_COPY.LIMIT_REACHED_DESC}</p>
+            <div className="mt-8 flex items-center justify-end gap-6">
+              <button
+                type="button"
+                onClick={() => {
+                  handleOpenChange(false)
+                }}
+                className="px-6 py-3.5 text-sm font-bold text-kmvmt-navy/50 transition-colors hover:text-kmvmt-navy"
+              >
+                {UNITS_COPY.BTN_CANCEL}
+              </button>
+            </div>
           </div>
         ) : (
           <Form {...form}>
@@ -104,27 +96,27 @@ export function AddUnitModal({ open, onOpenChange, limitReached = false }: AddUn
                 void form.handleSubmit(handleSubmit)(e)
               }}
             >
-              <div className="space-y-4 px-6 py-5">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-6 px-10 py-8">
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="prefix"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-medium text-kmvmt-navy">
+                        <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy">
                           {UNITS_COPY.FIELD_PREFIX}
-                        </FormLabel>
+                        </label>
                         <FormControl>
                           <Input
                             placeholder={UNITS_COPY.FIELD_PREFIX_PLACEHOLDER}
-                            className="border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy uppercase placeholder:text-kmvmt-navy/40 placeholder:normal-case focus-visible:ring-kmvmt-navy"
+                            className={`${FIELD_CLASS} uppercase placeholder:normal-case`}
                             {...field}
                             onChange={(e) => {
                               field.onChange(e.target.value.replace(/[^A-Za-z0-9]/g, ''))
                             }}
                           />
                         </FormControl>
-                        <p className="text-[11px] text-kmvmt-navy/40">
+                        <p className="mt-1.5 text-[11px] italic text-kmvmt-navy/40">
                           {UNITS_COPY.FIELD_PREFIX_HINT}
                         </p>
                         <FormMessage />
@@ -137,20 +129,20 @@ export function AddUnitModal({ open, onOpenChange, limitReached = false }: AddUn
                     name="unit_number"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-medium text-kmvmt-navy">
+                        <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.1em] text-kmvmt-navy">
                           {UNITS_COPY.FIELD_UNIT_NUMBER}
-                        </FormLabel>
+                        </label>
                         <FormControl>
                           <Input
                             placeholder={UNITS_COPY.FIELD_UNIT_NUMBER_PLACEHOLDER}
-                            className="border-zinc-200 bg-kmvmt-white text-sm text-kmvmt-navy placeholder:text-kmvmt-navy/40 focus-visible:ring-kmvmt-navy"
+                            className={FIELD_CLASS}
                             {...field}
                             onChange={(e) => {
                               field.onChange(e.target.value.replace(/[^A-Za-z0-9]/g, ''))
                             }}
                           />
                         </FormControl>
-                        <p className="text-[11px] text-kmvmt-navy/40">
+                        <p className="mt-1.5 text-[11px] italic text-kmvmt-navy/40">
                           {UNITS_COPY.FIELD_UNIT_NUMBER_HINT}
                         </p>
                         <FormMessage />
@@ -159,38 +151,47 @@ export function AddUnitModal({ open, onOpenChange, limitReached = false }: AddUn
                   />
                 </div>
 
-                {/* Code preview */}
                 {previewCode && (
-                  <div className="flex items-center justify-between rounded-lg border border-kmvmt-navy bg-kmvmt-navy px-4 py-3">
-                    <p className="text-xs text-white/50">{UNITS_COPY.FIELD_PREVIEW_LABEL}</p>
-                    <p className="text-sm font-semibold tracking-wide text-white">{previewCode}</p>
+                  <>
+                    <div className="flex items-center gap-4">
+                      <span className="h-px flex-1 bg-kmvmt-bg" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-kmvmt-navy/30">
+                        {UNITS_COPY.FIELD_PREVIEW_LABEL}
+                      </span>
+                      <span className="h-px flex-1 bg-kmvmt-bg" />
+                    </div>
+                    <div className="flex items-center justify-center rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-4 py-4">
+                      <p className="text-base font-extrabold tracking-wide text-white">
+                        {previewCode}
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {submitError && (
+                  <div className="rounded-xl bg-kmvmt-red-dark/8 px-4 py-3">
+                    <p className="text-xs text-kmvmt-red-dark">{submitError}</p>
                   </div>
                 )}
               </div>
 
-              {submitError && (
-                <div className="mx-6 mb-4 rounded-md border border-kmvmt-red-light bg-kmvmt-red-light/10 px-3 py-2.5">
-                  <p className="text-xs text-kmvmt-red-dark">{submitError}</p>
-                </div>
-              )}
-
-              <div className="flex gap-2.5 border-t border-zinc-200 bg-kmvmt-bg px-6 py-4">
-                <Button
+              <div className="flex items-center justify-end gap-6 px-10 pb-10 pt-2">
+                <button
                   type="button"
-                  className="flex-1 border border-zinc-300 bg-kmvmt-white text-sm text-kmvmt-navy hover:bg-kmvmt-bg"
                   onClick={() => {
                     handleOpenChange(false)
                   }}
+                  className="px-6 py-3.5 text-sm font-bold text-kmvmt-navy/50 transition-colors hover:text-kmvmt-navy"
                 >
                   {UNITS_COPY.BTN_CANCEL}
-                </Button>
-                <Button
+                </button>
+                <button
                   type="submit"
-                  className="flex-1 bg-kmvmt-navy text-sm text-white hover:bg-kmvmt-blue-light/80"
                   disabled={addUnit.isPending}
+                  className="rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-8 py-3.5 text-sm font-extrabold text-white shadow-[0_8px_20px_-4px_rgba(25,38,64,0.3)] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   {addUnit.isPending ? 'Adding\u2026' : UNITS_COPY.BTN_ADD}
-                </Button>
+                </button>
               </div>
             </form>
           </Form>

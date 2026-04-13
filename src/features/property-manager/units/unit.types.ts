@@ -22,6 +22,10 @@ export interface Unit {
   resident_count: number
   residents?: UnitResident[]
   created_at: string | null
+  // Present on POST /tenants/:id/units response so the client can update
+  // the auth store's tenantOnboardingStep without a separate fetch.
+  // Omitted on GET responses.
+  onboarding_step?: string
 }
 
 const ALPHANUMERIC_REGEX = /^[A-Za-z0-9]+$/

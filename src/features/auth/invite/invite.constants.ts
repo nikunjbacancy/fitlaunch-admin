@@ -1,14 +1,19 @@
-// Maps the tenant's onboarding_step returned by POST /auth/invite/accept
-// to the correct post-login redirect path.
-export const INVITE_ONBOARDING_REDIRECT: Record<string, string> = {
-  password_set: '/pm/setup',
-  branding_complete: '/pm/setup',
-  billing_complete: '/pm/setup',
-  units_complete: '/dashboard',
-  active: '/dashboard',
-}
+// ── DISABLED: onboarding wizard redirect map ────────────────────────────────
+// Product decision (2026-04-13): branding + unit directory are no longer part
+// of invite acceptance. All roles now redirect to /login after setting their
+// password. Kept commented so we can restore the wizard flow if product
+// direction changes.
+//
+// export const INVITE_ONBOARDING_REDIRECT: Record<string, string> = {
+//   password_set: '/pm/setup',
+//   branding_complete: '/pm/setup',
+//   billing_complete: '/pm/setup',
+//   units_complete: '/dashboard',
+//   active: '/dashboard',
+// }
+//
+// export const INVITE_REDIRECT_FALLBACK = '/pm/setup'
 
-export const INVITE_REDIRECT_FALLBACK = '/pm/setup'
 export const INVITE_REDIRECT_LOGIN = '/login'
 
 export const INVITE_COPY = {

@@ -13,7 +13,9 @@ const ROLE_REDIRECT: Record<UserRole, string> = {
 
 export function useLogin() {
   const navigate = useNavigate()
-  const { setUser } = useAuthStore()
+  const setUser = useAuthStore((s) => s.setUser)
+  const setTenantOnboardingStep = useAuthStore((s) => s.setTenantOnboardingStep)
+  const setOwnerManagedTenant = useAuthStore((s) => s.setOwnerManagedTenant)
 
   return useMutation({
     mutationFn: (payload: LoginPayload) => authService.login(payload),
@@ -21,6 +23,14 @@ export function useLogin() {
       // Pass true so isTwoFactorVerified is set atomically in one Zustand update,
       // avoiding a race where ProtectedRoute renders between setUser and setTwoFactorVerified.
       setUser(data.user, data.accessToken, true)
+
+      // Hydrate tenant onboarding state from login response (tenant is null for super_admin).
+      // Avoids a separate fetch and keeps the dashboard checklist banner accurate on first render.
+      if (data.tenant) {
+        setTenantOnboardingStep(data.tenant.onboarding_step)
+        setOwnerManagedTenant(data.tenant.owner_group_id !== null)
+      }
+
       void navigate(ROLE_REDIRECT[data.user.role])
     },
   })

@@ -26,6 +26,9 @@ export interface TBulkImportResult {
   imported: number
   skipped: number
   errors: { row: number; reason: string }[]
+  // Present on POST /tenants/:id/units/bulk so the client can update the
+  // auth store's tenantOnboardingStep without a separate fetch.
+  onboarding_step?: string
 }
 
 export const brandingSchema = z.object({

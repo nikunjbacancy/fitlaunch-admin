@@ -132,15 +132,18 @@ const router = createBrowserRouter([
     ],
   },
 
-  // ─── PM Setup (protected: PM + 2FA, onboarding check bypassed) ──────────
-  {
-    element: (
-      <ProtectedRoute allowedRoles={['property_manager']} requireTwoFactor skipOnboardingCheck />
-    ),
-    children: [
-      { path: '/pm/setup', element: lazyEl(() => import('@/pages/property-manager/setup')) },
-    ],
-  },
+  // ─── PM Setup wizard (DISABLED) ────────────────────────────────────────
+  // Branding + unit directory moved post-login (product decision 2026-04-13).
+  // Route kept commented for easy restore if the wizard flow returns.
+  //
+  // {
+  //   element: (
+  //     <ProtectedRoute allowedRoles={['property_manager']} requireTwoFactor skipOnboardingCheck />
+  //   ),
+  //   children: [
+  //     { path: '/pm/setup', element: lazyEl(() => import('@/pages/property-manager/setup')) },
+  //   ],
+  // },
 
   // ─── Property Manager (Admin layout + role guard + 2FA) ───────────────────
   {
@@ -163,6 +166,15 @@ const router = createBrowserRouter([
             element: lazyEl(() => import('@/pages/property-manager/challenges')),
           },
           { path: '/branding', element: lazyEl(() => import('@/pages/property-manager/branding')) },
+          {
+            path: '/announcements',
+            element: lazyEl(() => import('@/pages/property-manager/announcements')),
+          },
+          {
+            path: '/equipment',
+            element: lazyEl(() => import('@/pages/property-manager/equipment')),
+          },
+          { path: '/billing', element: lazyEl(() => import('@/pages/property-manager/billing')) },
         ],
       },
     ],

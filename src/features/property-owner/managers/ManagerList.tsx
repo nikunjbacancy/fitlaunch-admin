@@ -8,9 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { PageHeader } from '@/components/shared/PageHeader'
 import { DataTableSkeleton } from '@/components/shared/DataTableSkeleton'
 import { ErrorState } from '@/components/shared/ErrorState'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -50,73 +48,115 @@ export function ManagerList() {
   const managers = data ?? []
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={MANAGERS_COPY.PAGE_TITLE}
-        description={MANAGERS_COPY.PAGE_DESCRIPTION}
-        actions={
-          can('manage_location_managers') ? (
-            <Button
-              className="bg-kmvmt-navy text-white hover:bg-kmvmt-blue-light/80"
-              onClick={() => {
-                setAddOpen(true)
-              }}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              {MANAGERS_COPY.ADD_BTN}
-            </Button>
-          ) : undefined
-        }
-      />
-
+    <div className="space-y-8">
       {isLoading ? (
         <DataTableSkeleton columns={COLUMNS} rows={5} />
       ) : managers.length === 0 ? (
-        <EmptyState title={MANAGERS_COPY.EMPTY_TITLE} description={MANAGERS_COPY.EMPTY_DESC} />
+        <div className="overflow-hidden rounded-xl bg-kmvmt-white shadow-[0px_10px_40px_rgba(25,38,64,0.04)]">
+          <div className="flex items-center justify-between px-8 py-7">
+            <div>
+              <h4 className="text-xl font-extrabold tracking-tight text-kmvmt-navy">
+                {MANAGERS_COPY.PAGE_TITLE}
+              </h4>
+              <p className="mt-1 text-sm text-kmvmt-navy/50">{MANAGERS_COPY.PAGE_DESCRIPTION}</p>
+            </div>
+            {can('manage_location_managers') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setAddOpen(true)
+                }}
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95"
+              >
+                <Plus className="h-4 w-4" />
+                {MANAGERS_COPY.ADD_BTN}
+              </button>
+            )}
+          </div>
+          <div className="px-8 pb-10">
+            <EmptyState title={MANAGERS_COPY.EMPTY_TITLE} description={MANAGERS_COPY.EMPTY_DESC} />
+          </div>
+        </div>
       ) : (
-        <div className="rounded-lg border border-zinc-200 bg-kmvmt-white">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-kmvmt-navy">{MANAGERS_COPY.COL_NAME}</TableHead>
-                <TableHead className="text-kmvmt-navy">{MANAGERS_COPY.COL_EMAIL}</TableHead>
-                <TableHead className="text-kmvmt-navy">{MANAGERS_COPY.COL_LOCATION}</TableHead>
-                <TableHead className="text-kmvmt-navy">{MANAGERS_COPY.COL_STATUS}</TableHead>
-                <TableHead className="text-kmvmt-navy">{MANAGERS_COPY.COL_ACTIONS}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {managers.map((mgr) => (
-                <TableRow key={`${mgr.locationId}-${mgr.id}`}>
-                  <TableCell className="font-medium text-kmvmt-navy">{mgr.fullName}</TableCell>
-                  <TableCell className="text-kmvmt-navy">{mgr.email}</TableCell>
-                  <TableCell className="text-kmvmt-navy">{mgr.locationName}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={STATUS_BADGE_CLASSES[mgr.status] ?? STATUS_BADGE_CLASSES.invited}
-                    >
-                      {mgr.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {can('manage_location_managers') && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-kmvmt-red-dark hover:bg-kmvmt-red-light/10"
-                        onClick={() => {
-                          setRemoveTarget(mgr)
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </TableCell>
+        <div className="overflow-hidden rounded-xl bg-kmvmt-white shadow-[0px_10px_40px_rgba(25,38,64,0.04)]">
+          {/* Card header */}
+          <div className="flex items-center justify-between px-8 py-7">
+            <div>
+              <h4 className="text-xl font-extrabold tracking-tight text-kmvmt-navy">
+                {MANAGERS_COPY.PAGE_TITLE}
+              </h4>
+              <p className="mt-1 text-sm text-kmvmt-navy/50">{MANAGERS_COPY.PAGE_DESCRIPTION}</p>
+            </div>
+            {can('manage_location_managers') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setAddOpen(true)
+                }}
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95"
+              >
+                <Plus className="h-4 w-4" />
+                {MANAGERS_COPY.ADD_BTN}
+              </button>
+            )}
+          </div>
+
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-kmvmt-bg/50 border-y border-zinc-50">
+                  <TableHead className="px-8 text-[10px] font-black uppercase tracking-widest text-kmvmt-navy">
+                    {MANAGERS_COPY.COL_NAME}
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-kmvmt-navy">
+                    {MANAGERS_COPY.COL_EMAIL}
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-kmvmt-navy">
+                    {MANAGERS_COPY.COL_LOCATION}
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-kmvmt-navy">
+                    {MANAGERS_COPY.COL_STATUS}
+                  </TableHead>
+                  <TableHead />
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody className="divide-y divide-zinc-50">
+                {managers.map((mgr) => (
+                  <TableRow
+                    key={`${mgr.locationId}-${mgr.id}`}
+                    className="border-0 transition-colors hover:bg-kmvmt-bg/40"
+                  >
+                    <TableCell className="px-8 py-5 font-semibold text-kmvmt-navy">
+                      {mgr.fullName}
+                    </TableCell>
+                    <TableCell className="py-5 text-kmvmt-navy">{mgr.email}</TableCell>
+                    <TableCell className="py-5 text-kmvmt-navy">{mgr.locationName}</TableCell>
+                    <TableCell className="py-5">
+                      <Badge
+                        variant="outline"
+                        className={`rounded-full text-[10px] font-bold uppercase tracking-wider ${STATUS_BADGE_CLASSES[mgr.status] ?? STATUS_BADGE_CLASSES.invited}`}
+                      >
+                        {mgr.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-5 pr-8 text-right">
+                      {can('manage_location_managers') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRemoveTarget(mgr)
+                          }}
+                          className="text-xs font-bold text-kmvmt-red-dark transition-colors hover:text-kmvmt-red-light"
+                        >
+                          {MANAGERS_COPY.REMOVE_CONFIRM}
+                        </button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
 

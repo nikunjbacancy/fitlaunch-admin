@@ -1,5 +1,4 @@
 import { CheckCheck, Loader2, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { useBulkApproveResidents } from './useResidents'
 import { RESIDENT_COPY } from './constants'
 
@@ -19,33 +18,33 @@ export function BulkApproveBar({ selectedIds, onClear }: BulkApproveBarProps) {
 
   return (
     <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-      <div className="flex items-center gap-3 rounded-xl border border-border bg-white px-4 py-3 shadow-lg shadow-black/10">
-        <span className="text-sm font-medium text-foreground">
+      <div className="flex items-center gap-3 rounded-2xl bg-kmvmt-white px-5 py-3 shadow-[0px_20px_60px_rgba(25,38,64,0.18)] ring-1 ring-kmvmt-navy/5">
+        <span className="text-sm font-semibold text-kmvmt-navy">
           {selectedIds.length} resident{selectedIds.length === 1 ? '' : 's'} selected
         </span>
-        <div className="h-4 w-px bg-border" />
-        <Button
-          size="sm"
-          className="bg-green-600 hover:bg-green-700 text-white"
+        <span className="h-5 w-px bg-kmvmt-bg" />
+        <button
+          type="button"
           disabled={isPending}
           onClick={handleApprove}
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-kmvmt-navy to-kmvmt-blue-light px-4 py-2 text-xs font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? (
-            <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <CheckCheck className="mr-2 h-3.5 w-3.5" />
+            <CheckCheck className="h-3.5 w-3.5" />
           )}
           {RESIDENT_COPY.BULK_APPROVE_LABEL}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
+        </button>
+        <button
+          type="button"
           aria-label={RESIDENT_COPY.BULK_CLEAR_LABEL}
           disabled={isPending}
           onClick={onClear}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-kmvmt-navy/40 transition-colors hover:bg-kmvmt-bg hover:text-kmvmt-navy"
         >
           <X className="h-4 w-4" />
-        </Button>
+        </button>
       </div>
     </div>
   )

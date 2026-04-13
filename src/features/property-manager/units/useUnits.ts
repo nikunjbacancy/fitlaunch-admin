@@ -10,6 +10,14 @@ function useTenantId(): string | null {
   return useAuthStore((s) => s.user?.tenantId ?? null)
 }
 
+// Shared helper — unit create + bulk import both return an onboarding_step field
+// that reflects auto-promotion (e.g. 'active' once branding and ≥1 unit exist).
+// Pushing it into the auth store keeps the dashboard checklist banner in sync
+// without a separate /auth/me refetch.
+function useSyncOnboardingStep() {
+  return useAuthStore((s) => s.setTenantOnboardingStep)
+}
+
 export function useUnitSummary() {
   const tenantId = useTenantId()
   return useQuery({
@@ -33,13 +41,15 @@ export function useUnits() {
 export function useAddUnit() {
   const tenantId = useTenantId()
   const queryClient = useQueryClient()
+  const syncOnboardingStep = useSyncOnboardingStep()
   return useMutation({
     mutationFn: (payload: TAddUnitPayload) => {
       if (!tenantId) return Promise.reject(new Error('No tenant selected'))
       return unitService.add(tenantId, payload)
     },
-    onSuccess: () => {
+    onSuccess: (unit) => {
       toast.success(UNITS_COPY.SUCCESS_ADDED)
+      if (unit.onboarding_step) syncOnboardingStep(unit.onboarding_step)
       void queryClient.invalidateQueries({ queryKey: ['units', tenantId] })
       void queryClient.invalidateQueries({ queryKey: ['unit-summary', tenantId] })
     },
@@ -90,13 +100,15 @@ export function useRemoveUnit() {
 export function useBulkImportUnits() {
   const tenantId = useTenantId()
   const queryClient = useQueryClient()
+  const syncOnboardingStep = useSyncOnboardingStep()
   return useMutation({
     mutationFn: (file: File) => {
       if (!tenantId) return Promise.reject(new Error('No tenant selected'))
       return unitService.bulkImport(tenantId, file)
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       toast.success(UNITS_COPY.SUCCESS_IMPORTED)
+      if (result.onboarding_step) syncOnboardingStep(result.onboarding_step)
       void queryClient.invalidateQueries({ queryKey: ['units', tenantId] })
       void queryClient.invalidateQueries({ queryKey: ['unit-summary', tenantId] })
     },
